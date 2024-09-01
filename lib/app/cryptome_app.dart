@@ -1,4 +1,5 @@
-import 'package:cryptome/features/registration/widgets/registation_screen.dart';
+import 'package:cryptome/core/router/cryptome_router.dart';
+import 'package:cryptome/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class CryptomeApp extends StatelessWidget {
@@ -6,8 +7,10 @@ class CryptomeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const  MaterialApp(
-      home: RegistationScreen(),
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      theme: TCiphermeTheme.lightTheme,
+      routerConfig: TCryptomeRouter.router,
     );
   }
 }
