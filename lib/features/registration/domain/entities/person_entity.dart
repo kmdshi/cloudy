@@ -23,7 +23,13 @@ class PersonEntity {
       avatar: avatar ?? this.avatar,
       nickname: nickname ?? this.nickname,
       interests: interests ?? this.interests,
-      keyPhrase: keyPhrase ?? this.keyPhrase, 
+      keyPhrase: keyPhrase ?? this.keyPhrase,
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'interests': interests,
+    };
   }
 }

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "23765548644",
+    "project_id": "cipherme-40a8b",
+    "storage_bucket": "cipherme-40a8b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23765548644:android:6b981ebf51b9eb2b06e971",
+        "android_client_info": {
+          "package_name": "com.example.cipherme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKdBhDEWNL6efvge8izA6yA26xzi3FObo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23765548644:android:67c2bf6fdd17721406e971",
+        "android_client_info": {
+          "package_name": "com.example.cryptome"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKdBhDEWNL6efvge8izA6yA26xzi3FObo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

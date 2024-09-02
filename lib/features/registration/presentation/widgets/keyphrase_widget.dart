@@ -117,7 +117,7 @@ class _KeyPhraseWidgetState extends State<KeyPhraseWidget> {
   }
 
   String keyPhraseToText(List<String> keyPhrase) {
-    final shuffledKeyPhrase = keyPhrase..shuffle(Random());
+    final shuffledKeyPhrase = keyPhrase..shuffle(Random.secure());
 
     return shuffledKeyPhrase
         .asMap()

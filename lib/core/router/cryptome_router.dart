@@ -1,11 +1,16 @@
-import 'package:cryptome/features/authentication/domain/entities/person_entity.dart';
-import 'package:cryptome/features/authentication/presentation/widgets/onboarding_screen.dart';
-import 'package:cryptome/features/authentication/presentation/widgets/registration_screen.dart';
-import 'package:cryptome/features/authentication/presentation/widgets/restore_screen.dart';
-import 'package:cryptome/features/authentication/presentation/widgets/verefication_screen.dart';
-import 'package:cryptome/features/authentication/presentation/widgets/verify_sucess_screen.dart';
+import 'dart:convert';
+
+import 'package:cryptome/core/DI/dependency_config.dart';
+import 'package:cryptome/features/messaging/presentation/widgets/messages_screen.dart';
+import 'package:cryptome/features/registration/domain/entities/person_entity.dart';
+import 'package:cryptome/features/registration/presentation/widgets/onboarding_screen.dart';
+import 'package:cryptome/features/registration/presentation/widgets/registration_screen.dart';
+import 'package:cryptome/features/registration/presentation/widgets/restore_screen.dart';
+import 'package:cryptome/features/registration/presentation/widgets/verefication_screen.dart';
+import 'package:cryptome/features/registration/presentation/widgets/verify_sucess_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TCryptomeRouter {
   TCryptomeRouter._();
@@ -14,6 +19,9 @@ class TCryptomeRouter {
 
   static final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
+    redirect: (context, state) {
+      return handleRedirect();
+    },
     initialLocation: '/start',
     routes: [
       GoRoute(
@@ -48,6 +56,26 @@ class TCryptomeRouter {
           )
         ],
       ),
+      GoRoute(
+        path: '/messages',
+        builder: (context, state) => MessagesScreen(),
+      )
     ],
   );
+}
+
+String? handleRedirect() {
+  final prefs = getIt<SharedPreferences>();
+  var sessionInformation = prefs.getString('session_information');
+
+  if (sessionInformation == null) {
+    return '/onboarding';
+  }
+
+  final sessionData = jsonDecode(sessionInformation);
+  bool isLoggined = sessionData['is_loggined'] ?? false;
+  if (isLoggined) {
+    return '/messages';
+  }
+  return null;
 }
