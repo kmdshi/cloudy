@@ -21,6 +21,7 @@ import 'package:cryptome/features/registration/domain/repository/registration_re
     as _i547;
 import 'package:cryptome/features/registration/presentation/bloc/registration_bloc.dart'
     as _i25;
+import 'package:firebase_storage/firebase_storage.dart' as _i457;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -46,12 +47,15 @@ extension GetItInjectableX on _i174.GetIt {
         () => injectionModule.secureStorage);
     gh.lazySingleton<_i974.FirebaseFirestore>(
         () => injectionModule.firebaseFirestore());
+    gh.lazySingleton<_i457.FirebaseStorage>(
+        () => injectionModule.firebaseStorage());
     gh.lazySingleton<_i900.CipherService>(
         () => injectionModule.encryptionService());
     gh.lazySingleton<_i225.RegistrationRemoteSource>(
         () => _i225.RegistrationRemoteSource(
               fireStoreDB: gh<_i974.FirebaseFirestore>(),
               cipherService: gh<_i900.CipherService>(),
+              firestorage: gh<_i457.FirebaseStorage>(),
             ));
     gh.lazySingleton<_i604.RegistrationLocalSource>(() =>
         _i604.RegistrationLocalSource(

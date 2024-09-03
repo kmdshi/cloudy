@@ -1,6 +1,8 @@
 import 'package:cryptome/core/theme/color_theme.dart';
 import 'package:cryptome/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 class TCiphermeTheme {
   TCiphermeTheme._();
@@ -46,6 +48,44 @@ class TCiphermeTheme {
       ),
       side: const BorderSide(
         color: TColorTheme.darkLabel,
+      ),
+    ),
+    appBarTheme: const AppBarTheme(
+      centerTitle: false,
+      backgroundColor: TColorTheme.scaffoldbg,
+      titleTextStyle: TextStyle(
+        fontFamily: 'Chillax',
+        fontWeight: FontWeight.w600,
+        color: TColorTheme.textGrey,
+        fontSize: 20,
+      ),
+    ),
+    tabBarTheme: TabBarTheme(
+      labelPadding: EdgeInsets.all(16),
+      dividerColor: TColorTheme.transparent,
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicator: RectangularIndicator(
+        horizontalPadding: 7,
+        verticalPadding: 4,
+        color: TColorTheme.textGrey,
+        bottomRightRadius: 100,
+        topLeftRadius: 100,
+        topRightRadius: 100,
+        bottomLeftRadius: 100,
+      ),
+      labelStyle: TTextTheme.textTheme.titleSmall!
+          .copyWith(fontWeight: FontWeight.w200),
+      unselectedLabelStyle: TTextTheme.textTheme.titleSmall!
+          .copyWith(fontWeight: FontWeight.w200),
+      labelColor: TColorTheme.white,
+      unselectedLabelColor: TColorTheme.textGrey,
+      splashFactory: NoSplash.splashFactory,
+      overlayColor: WidgetStateProperty.resolveWith<Color?>(
+        (Set<WidgetState> states) {
+          return states.contains(WidgetState.focused)
+              ? null
+              : Colors.transparent;
+        },
       ),
     ),
   );

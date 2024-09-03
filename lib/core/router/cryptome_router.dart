@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:cryptome/core/DI/dependency_config.dart';
-import 'package:cryptome/features/messaging/presentation/widgets/messages_screen.dart';
+import 'package:cryptome/features/messaging/presentation/widgets/general_screen.dart';
 import 'package:cryptome/features/registration/domain/entities/person_entity.dart';
 import 'package:cryptome/features/registration/presentation/widgets/onboarding_screen.dart';
 import 'package:cryptome/features/registration/presentation/widgets/registration_screen.dart';
@@ -19,11 +19,14 @@ class TCryptomeRouter {
 
   static final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
-    redirect: (context, state) {
-      return handleRedirect();
-    },
-    initialLocation: '/start',
+    initialLocation: '/verification',
     routes: [
+      GoRoute(
+        path: '/verification',
+        redirect: (context, state) {
+          return handleRedirect();
+        },
+      ),
       GoRoute(
         path: '/start',
         builder: (context, state) => const OnboardingScreen(),
@@ -58,7 +61,7 @@ class TCryptomeRouter {
       ),
       GoRoute(
         path: '/messages',
-        builder: (context, state) => MessagesScreen(),
+        builder: (context, state) => const GeneralScreen(),
       )
     ],
   );
@@ -69,7 +72,7 @@ String? handleRedirect() {
   var sessionInformation = prefs.getString('session_information');
 
   if (sessionInformation == null) {
-    return '/onboarding';
+    return '/start';
   }
 
   final sessionData = jsonDecode(sessionInformation);

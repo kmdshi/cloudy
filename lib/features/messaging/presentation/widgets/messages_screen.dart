@@ -1,3 +1,4 @@
+import 'package:cryptome/core/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 
 class MessagesScreen extends StatelessWidget {
@@ -5,10 +6,8 @@ class MessagesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('СТРАНИЦА МЕССАГОВ'),
-      ),
+    return Center(
+      child: Assets.images.bgNoChats.image(),
     );
   }
 }

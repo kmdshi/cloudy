@@ -16,8 +16,16 @@ class $AssetsIconsGen {
   AssetGenImage get doneIcon =>
       const AssetGenImage('assets/icons/done_icon.png');
 
+  /// File path: assets/icons/search_icon.png
+  AssetGenImage get searchIcon =>
+      const AssetGenImage('assets/icons/search_icon.png');
+
+  /// File path: assets/icons/setting_icon.png
+  AssetGenImage get settingIcon =>
+      const AssetGenImage('assets/icons/setting_icon.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [doneIcon];
+  List<AssetGenImage> get values => [doneIcon, searchIcon, settingIcon];
 }
 
 class $AssetsImagesGen {

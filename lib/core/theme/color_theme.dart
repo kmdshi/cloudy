@@ -14,4 +14,5 @@ class TColorTheme {
   static const black = Colors.black;
   static const red = Colors.red;
   static const transparent = Colors.transparent;
+  static const tabbarBg = Color(0xFFDBE2EC);
 }
