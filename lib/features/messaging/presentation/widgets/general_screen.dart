@@ -1,11 +1,36 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
+import 'package:cryptome/core/DI/dependency_config.dart';
 import 'package:cryptome/core/gen/assets.gen.dart';
 import 'package:cryptome/features/messaging/presentation/widgets/custom_icon_button_widget.dart';
 import 'package:cryptome/features/messaging/presentation/widgets/custom_tabbar_widget.dart';
 import 'package:cryptome/features/messaging/presentation/widgets/messages_screen.dart';
 import 'package:flutter/material.dart';
 
-class GeneralScreen extends StatelessWidget {
+class GeneralScreen extends StatefulWidget {
   const GeneralScreen({super.key});
+
+  @override
+  State<GeneralScreen> createState() => _GeneralScreenState();
+}
+
+class _GeneralScreenState extends State<GeneralScreen> {
+  // late final AppLinks _appLinks;
+  // late final StreamSubscription<Uri?> _sub;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _appLinks = getIt<AppLinks>();
+  //   handleLink();
+  // }
+
+  // @override
+  // void dispose() {
+  //   _sub.cancel();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -56,4 +81,12 @@ class GeneralScreen extends StatelessWidget {
       ),
     );
   }
+
+  // void handleLink() {
+  //   _sub = _appLinks.uriLinkStream.listen((uri) {
+  //     print(uri);
+  //   }, onError: (err) {
+  //     print('Ошибка при обработке диплинка: $err');
+  //   });
+  // }
 }

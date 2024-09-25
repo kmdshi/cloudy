@@ -8,9 +8,11 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:app_links/app_links.dart' as _i327;
 import 'package:cloud_firestore/cloud_firestore.dart' as _i974;
 import 'package:cryptome/core/DI/dependency_config.dart' as _i982;
 import 'package:cryptome/core/services/cipher_service.dart' as _i900;
+import 'package:cryptome/core/services/deeplink_handler.dart' as _i998;
 import 'package:cryptome/features/registration/data/data_source/local_source.dart'
     as _i604;
 import 'package:cryptome/features/registration/data/data_source/remote_source.dart'
@@ -45,12 +47,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i558.FlutterSecureStorage>(
         () => injectionModule.secureStorage);
+    gh.lazySingleton<_i327.AppLinks>(() => injectionModule.appLinks);
     gh.lazySingleton<_i974.FirebaseFirestore>(
         () => injectionModule.firebaseFirestore());
     gh.lazySingleton<_i457.FirebaseStorage>(
         () => injectionModule.firebaseStorage());
     gh.lazySingleton<_i900.CipherService>(
         () => injectionModule.encryptionService());
+    gh.lazySingleton<_i998.DeepLinkHandlerService>(
+        () => injectionModule.deepLinkHandlerService());
     gh.lazySingleton<_i225.RegistrationRemoteSource>(
         () => _i225.RegistrationRemoteSource(
               fireStoreDB: gh<_i974.FirebaseFirestore>(),

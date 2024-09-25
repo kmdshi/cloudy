@@ -1,6 +1,8 @@
+import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cryptome/core/DI/dependency_config.config.dart';
 import 'package:cryptome/core/services/cipher_service.dart';
+import 'package:cryptome/core/services/deeplink_handler.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -24,7 +26,13 @@ abstract class InjectionModule {
   FirebaseStorage firebaseStorage() => FirebaseStorage.instance;
 
   @lazySingleton
+  AppLinks get appLinks => AppLinks();
+
+  @lazySingleton
   CipherService encryptionService() => CipherService();
+
+  @lazySingleton
+  DeepLinkHandlerService deepLinkHandlerService() => DeepLinkHandlerService();
 }
 
 @injectableInit
