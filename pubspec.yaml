@@ -21,17 +21,11 @@ version: 1.0.0+1
 environment:
   sdk: ">=3.5.0 <4.0.0"
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   app_links: ^6.3.1
   basic_utils: ^5.7.0
   cloud_firestore: ^5.3.0
-  collection: ^1.19.0
+  collection: ^1.18.0
   crypto: ^3.0.5
   cupertino_icons: ^1.0.8
   equatable: ^2.0.5
@@ -48,13 +42,14 @@ dependencies:
   injectable: ^2.4.4
   mobkit_dashed_border: ^0.0.6
   pointycastle: ^3.9.1
+  qr_flutter: ^4.1.0
   shared_preferences: ^2.3.2
   tab_indicator_styler: ^2.0.0
 
 dev_dependencies:
   build_runner: ^2.4.12
-  flutter_gen: ^5.7.0
   flutter_lints: ^4.0.0
+  flutter_gen: ^5.7.0
   flutter_test:
     sdk: flutter
   injectable_generator: ^2.6.1

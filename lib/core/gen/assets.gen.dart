@@ -12,9 +12,21 @@ import 'package:flutter/widgets.dart';
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/arrow_icon.png
+  AssetGenImage get arrowIcon =>
+      const AssetGenImage('assets/icons/arrow_icon.png');
+
   /// File path: assets/icons/done_icon.png
   AssetGenImage get doneIcon =>
       const AssetGenImage('assets/icons/done_icon.png');
+
+  /// File path: assets/icons/paper_icon.png
+  AssetGenImage get paperIcon =>
+      const AssetGenImage('assets/icons/paper_icon.png');
+
+  /// File path: assets/icons/scan_icon.png
+  AssetGenImage get scanIcon =>
+      const AssetGenImage('assets/icons/scan_icon.png');
 
   /// File path: assets/icons/search_icon.png
   AssetGenImage get searchIcon =>
@@ -25,7 +37,8 @@ class $AssetsIconsGen {
       const AssetGenImage('assets/icons/setting_icon.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [doneIcon, searchIcon, settingIcon];
+  List<AssetGenImage> get values =>
+      [arrowIcon, doneIcon, paperIcon, scanIcon, searchIcon, settingIcon];
 }
 
 class $AssetsImagesGen {

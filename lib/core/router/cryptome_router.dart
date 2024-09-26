@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cryptome/core/DI/dependency_config.dart';
 import 'package:cryptome/features/messaging/presentation/widgets/general_screen.dart';
+import 'package:cryptome/features/messaging/presentation/widgets/import_adress_screen.dart';
 import 'package:cryptome/features/registration/domain/entities/person_entity.dart';
 import 'package:cryptome/features/registration/presentation/widgets/onboarding_screen.dart';
 import 'package:cryptome/features/registration/presentation/widgets/registration_screen.dart';
@@ -62,6 +63,12 @@ class TCryptomeRouter {
       GoRoute(
         path: '/messages',
         builder: (context, state) => const GeneralScreen(),
+        routes: [
+          GoRoute(
+            path: 'import',
+            builder: (context, state) => const ImportAddressScreen(),
+          )
+        ],
       )
     ],
   );

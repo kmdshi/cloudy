@@ -23,11 +23,11 @@ class _CryptomeAppState extends State<CryptomeApp> {
     _deepLinkHandler.startListening();
   }
 
-  @override
-  void dispose() {
-    _deepLinkHandler.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _deepLinkHandler.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
