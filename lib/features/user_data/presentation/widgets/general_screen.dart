@@ -1,11 +1,8 @@
-import 'dart:async';
 
-import 'package:app_links/app_links.dart';
-import 'package:cryptome/core/DI/dependency_config.dart';
 import 'package:cryptome/core/gen/assets.gen.dart';
-import 'package:cryptome/features/messaging/presentation/widgets/custom_icon_button_widget.dart';
-import 'package:cryptome/features/messaging/presentation/widgets/custom_tabbar_widget.dart';
-import 'package:cryptome/features/messaging/presentation/widgets/messages_screen.dart';
+import 'package:cryptome/features/user_data/presentation/widgets/custom_icon_button_widget.dart';
+import 'package:cryptome/features/user_data/presentation/widgets/custom_tabbar_widget.dart';
+import 'package:cryptome/features/user_data/presentation/widgets/messages_screen.dart';
 import 'package:flutter/material.dart';
 
 class GeneralScreen extends StatefulWidget {

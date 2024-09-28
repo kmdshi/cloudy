@@ -1,5 +1,5 @@
 import 'package:cryptome/core/theme/color_theme.dart';
-import 'package:cryptome/features/messaging/presentation/widgets/tab_item_widget.dart';
+import 'package:cryptome/features/user_data/presentation/widgets/tab_item_widget.dart';
 import 'package:flutter/material.dart';
 
 class CustomTabbarWidget extends StatelessWidget {

@@ -18,13 +18,19 @@ class RegistrationRemoteSource {
     required this.firestorage,
   });
 
-  Future<void> addPerson(PersonEntity personEntity) async {
+  Future<void> addPerson(
+    PersonEntity personEntity,
+    Map<String, String> keys,
+  ) async {
     final AID =
         cipherService.createAID(personEntity.nickname, personEntity.keyPhrase);
     DocumentReference<Map<String, dynamic>> documentReference =
         fireStoreDB.collection('accounts').doc(AID);
 
     Map<String, dynamic> data = personEntity.toMap();
+
+    data['public_key_modulus'] = keys['public_key_modulus'];
+    data['public_key_exponent'] = keys['public_key_exponent'];
 
     if (personEntity.avatar != null) {
       await uploadAvatar(personEntity.avatar!, AID);

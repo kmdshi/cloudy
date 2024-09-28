@@ -1,60 +1,129 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:cryptome/core/gen/assets.gen.dart';
 import 'package:cryptome/core/theme/color_theme.dart';
+import 'package:cryptome/features/messaging/domain/entities/initial_data_value.dart';
+import 'package:cryptome/features/user_data/presentation/bloc/messaging_bloc.dart';
+import 'package:cryptome/features/user_data/presentation/widgets/user_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class MessagesScreen extends StatelessWidget {
+class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
 
   @override
+  State<MessagesScreen> createState() => _MessagesScreenState();
+}
+
+class _MessagesScreenState extends State<MessagesScreen> {
+  @override
+  void initState() {
+    context.read<UserDataBloc>().add(GetStartUserData());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: MediaQuery.sizeOf(context).height * 0.2),
-        Assets.images.bgNoChats.image(),
-        const SizedBox(height: 40),
-        ElevatedButton(
-          onPressed: () => _showUrlDialog(context),
-          style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                fixedSize: const WidgetStatePropertyAll(Size(180, 40)),
-              ),
-          child: Text(
-            'Enable public url',
-            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16,
-                  color: TColorTheme.white,
-                ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          'or',
-          style: Theme.of(context)
-              .textTheme
-              .headlineMedium!
-              .copyWith(fontSize: 16),
-        ),
-        const SizedBox(height: 10),
-        TextButton(
-          onPressed: () => context.push('/messages/import'),
-          style: Theme.of(context).textButtonTheme.style!.copyWith(
-                foregroundColor:
-                    const WidgetStatePropertyAll(TColorTheme.mainBlue),
-                textStyle: WidgetStatePropertyAll(Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(fontSize: 16)),
-              ),
-          child: const Text('Import an address'),
-        )
-      ],
+    return BlocBuilder<UserDataBloc, UserDataState>(
+      builder: (context, state) {
+        if (state is UserDataLoaded) {
+          final user = state.userData;
+
+          return user.contacts.isEmpty
+              ? Column(
+                  children: [
+                    SizedBox(height: MediaQuery.sizeOf(context).height * 0.2),
+                    Assets.images.bgNoChats.image(),
+                    const SizedBox(height: 40),
+                    ElevatedButton(
+                      onPressed: () => _showUrlDialog(
+                        context,
+                        user.AID,
+                        user.urlStatus,
+                      ),
+                      style:
+                          Theme.of(context).elevatedButtonTheme.style!.copyWith(
+                                fixedSize:
+                                    const WidgetStatePropertyAll(Size(180, 40)),
+                              ),
+                      child: Text(
+                        'Enable public url',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium!
+                            .copyWith(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16,
+                              color: TColorTheme.white,
+                            ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'or',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () => context.push('/messages/import'),
+                      style: Theme.of(context).textButtonTheme.style!.copyWith(
+                            foregroundColor: const WidgetStatePropertyAll(
+                                TColorTheme.mainBlue),
+                            textStyle: WidgetStatePropertyAll(Theme.of(context)
+                                .textTheme
+                                .headlineMedium!
+                                .copyWith(fontSize: 16)),
+                          ),
+                      child: const Text('Import an address'),
+                    )
+                  ],
+                )
+              : ListView.separated(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  itemCount: user.contacts.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 10),
+                  itemBuilder: (_, index) {
+                    final currentUser = user.contacts[index];
+                    final data = InitialDataValueEntity(
+                        initiatorAID: user.AID,
+                        secondAID: currentUser.AID,
+                        fPublicKeyExponent: user.keys['public_key_exponent']!,
+                        fPublicKeyModulus: user.keys['public_key_modulus']!,
+                        sPublicKeyExponent: currentUser.publicKeyExponent,
+                        sPublicKeyModulus: currentUser.publicKeyModulus);
+                    return UserWidget(
+                      avatarUrl: currentUser.urlAvatar,
+                      userName: currentUser.username,
+                      onTap: () =>
+                          context.push('/messages/communication', extra: data),
+                    );
+                  });
+        } else if (state is UserDataLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (state is UserDataFailure) {
+          return Center(
+            child: Text(state.message),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 
-  Future<Object?> _showUrlDialog(BuildContext context) async {
+  Future<Object?> _showUrlDialog(
+    BuildContext context,
+    String AID,
+    bool urlStatus,
+  ) async {
     return showGeneralDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.5),
@@ -116,8 +185,7 @@ class MessagesScreen extends StatelessWidget {
                         const SizedBox(height: 10),
                         Center(
                           child: QrImageView(
-                            data:
-                                'public.cx/0x79BFAA8B226FC527315A8C07B2953927382CDE8B',
+                            data: 'public.cx/0x$AID',
                             version: QrVersions.auto,
                             size: 115.0,
                           ),
@@ -137,7 +205,7 @@ class MessagesScreen extends StatelessWidget {
                         GestureDetector(
                           onTap: () => onTextTap(context),
                           child: Text(
-                            'public.cx/0x79BFAA8B226FC527315A8C07B2953927382CDE8B',
+                            'public.cx/0x$AID',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleSmall!
@@ -192,7 +260,9 @@ class MessagesScreen extends StatelessWidget {
                                 ),
                               ),
                           child: Text(
-                            'Disable Public url',
+                            urlStatus
+                                ? 'Disable Public url'
+                                : 'Enable Public url',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleSmall!

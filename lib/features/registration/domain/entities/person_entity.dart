@@ -30,6 +30,8 @@ class PersonEntity {
   Map<String, dynamic> toMap() {
     return {
       'interests': interests,
+      'urlStatus': false,
+      'contacts': [],
     };
   }
 }

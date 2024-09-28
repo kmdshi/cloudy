@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:cryptome/core/DI/dependency_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MessagingLocalRepo {
+@lazySingleton
+class UserDataLocalRepo {
   Future<Map<String, dynamic>> getLocalUserData() async {
     final sharedPrefs = getIt<SharedPreferences>();
     final secureStorage = getIt<FlutterSecureStorage>();

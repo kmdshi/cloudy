@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:cryptome/features/registration/data/data_source/local_source.dart';
-import 'package:cryptome/features/registration/data/data_source/remote_source.dart';
+import 'package:cryptome/features/registration/data/data_source/local/registration_local_source.dart';
+import 'package:cryptome/features/registration/data/data_source/remote/registration_remote_source.dart';
 import 'package:cryptome/features/registration/domain/entities/person_entity.dart';
 import 'package:cryptome/features/registration/domain/repository/registration_repository.dart';
 import 'package:injectable/injectable.dart';
@@ -17,6 +17,8 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   Future<void> createPesron(PersonEntity personEntity) async {
     await registrationLocalSource.createSession(
         personEntity.nickname, personEntity.keyPhrase);
-    await registrationRemoteSource.addPerson(personEntity);
+    final keys = await registrationLocalSource.createKeyPairs(
+        personEntity.nickname, personEntity.keyPhrase);
+    await registrationRemoteSource.addPerson(personEntity, keys);
   }
 }

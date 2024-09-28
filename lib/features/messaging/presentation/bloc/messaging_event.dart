@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'messaging_bloc.dart';
 
 sealed class MessagingEvent extends Equatable {
@@ -5,4 +6,13 @@ sealed class MessagingEvent extends Equatable {
 
   @override
   List<Object> get props => [];
+}
+
+class DialogInitializationEvent extends MessagingEvent {
+  final InitialDataValueEntity initialDataValue;
+  const DialogInitializationEvent({
+    required this.initialDataValue,
+  });
+  @override
+  List<Object> get props => [initialDataValue];
 }

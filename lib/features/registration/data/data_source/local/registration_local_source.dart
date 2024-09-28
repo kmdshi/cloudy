@@ -5,7 +5,6 @@ import 'package:cryptome/core/DI/dependency_config.dart';
 import 'package:cryptome/core/services/cipher_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
-import 'package:pointycastle/pointycastle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:basic_utils/basic_utils.dart';
 
@@ -16,7 +15,10 @@ class RegistrationLocalSource {
     required this.cipherService,
   });
 
-  Future<void> createSession(String nickname, List<String> keyPhrase) async {
+  Future<void> createSession(
+    String nickname,
+    List<String> keyPhrase,
+  ) async {
     final prefs = getIt<SharedPreferences>();
     final String? data = prefs.getString('session_information');
 
@@ -28,18 +30,20 @@ class RegistrationLocalSource {
       'AID': cipherService.createAID(nickname, keyPhrase)
     };
 
-    await createKeyPairs(nickname, keyPhrase);
     String sessionInfoString = jsonEncode(sessionInfo);
 
     await prefs.setString('session_information', sessionInfoString);
   }
 
-  Future<void> createKeyPairs(String nickname, List<String> keyPhrase) async {
+  Future<Map<String, String>> createKeyPairs(
+      String nickname, List<String> keyPhrase) async {
     final secureStorage = getIt<FlutterSecureStorage>();
 
-    String? key = await secureStorage.read(key: 'cipher_keys');
+    String? keyJson = await secureStorage.read(key: 'cipher_keys');
 
-    if (key != null) return;
+    if (keyJson != null) {
+      return Map<String, String>.from(jsonDecode(keyJson));
+    }
 
     final keyPair = cipherService.generateKeyPairFromSeed(nickname, keyPhrase);
 
@@ -67,5 +71,7 @@ class RegistrationLocalSource {
     final keyPairJson = jsonEncode(keyPairMap);
 
     await secureStorage.write(key: 'cipher_keys', value: keyPairJson);
+
+    return keyPairMap;
   }
 }

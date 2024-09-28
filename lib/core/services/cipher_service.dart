@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:pointycastle/asymmetric/rsa.dart';
+import 'package:pointycastle/digests/sha256.dart';
 import 'package:pointycastle/key_generators/rsa_key_generator.dart';
 import 'package:pointycastle/pointycastle.dart';
 import 'package:pointycastle/random/fortuna_random.dart';
@@ -72,5 +74,39 @@ class CipherService {
           .add(engine.process(Uint8List.fromList(input.sublist(offset, end))));
     }
     return output.toBytes();
+  }
+
+  Uint8List generateSalt([int length = 16]) {
+    final random = Random.secure();
+    return Uint8List.fromList(
+        List<int>.generate(length, (_) => random.nextInt(256)));
+  }
+
+  Uint8List generateSymmetricKey({int keyLength = 32}) {
+    final salt = generateSalt();
+    final digest = SHA256Digest();
+    final hashedSalt = digest.process(salt);
+
+    return Uint8List.fromList(hashedSalt.take(keyLength).toList());
+  }
+
+  Uint8List encryptDialogKeyWithPublicUserKey(
+      Uint8List symmetricKey, String base64Modulus, String base64Exponent) {
+    Uint8List modulusBytes = base64.decode(base64Modulus);
+    Uint8List exponentBytes = base64.decode(base64Exponent);
+
+    BigInt modulus = BigInt.parse(
+        modulusBytes.map((byte) => byte.toRadixString(16)).join(),
+        radix: 16);
+    BigInt exponent = BigInt.parse(
+        exponentBytes.map((byte) => byte.toRadixString(16)).join(),
+        radix: 16);
+
+    final rsaPublicKey = RSAPublicKey(modulus, exponent);
+
+    final encryptor = RSAEngine()
+      ..init(true, PublicKeyParameter<RSAPublicKey>(rsaPublicKey));
+
+    return encryptor.process(symmetricKey);
   }
 }
