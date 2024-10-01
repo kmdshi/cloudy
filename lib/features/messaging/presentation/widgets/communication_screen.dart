@@ -34,6 +34,45 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
           icon: Assets.icons.arrowIcon.image(),
         ),
       ),
+      body: BlocBuilder<MessagingBloc, MessagingState>(
+        builder: (context, state) {
+          if (state is MessagingLoaded) {
+            final adsa = state.dialogKey;
+            final dialog = state.chatHistory;
+            // return StreamBuilder(
+            //   stream: state.chatHistory,
+            //   builder: (context, snapshot) {
+            //     if (snapshot.hasData) {
+            //       if (snapshot.data!.isEmpty) {
+            //         return Center(child: Text('No messages yet'));
+            //       }
+            //       return SizedBox.shrink();
+            //       // } else {
+            //       //   return ListView.builder(
+            //       //     itemCount: messages.length,
+            //       //     itemBuilder: (context, index) {
+            //       //       final message = messages[index];
+            //       //       return ListTile(
+            //       //         title: Text(message['text'] ?? ''),
+            //       //         subtitle:
+            //       //             Text(message['timestamp']?.toString() ?? ''),
+            //       //       );
+            //       //     },
+            //       //   );
+            //       // }
+            //     } else {
+            //       return Center(child: Text('shapshot eror'));
+            //     }
+            //   },
+            // );
+          } else if (state is MessagingLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is MessagingFailure) {
+            return Center(child: Text(state.message));
+          }
+          return const SizedBox.shrink();
+        },
+      ),
     );
   }
 }

@@ -66,6 +66,8 @@ class RegistrationLocalSource {
       'public_key_exponent': publicKeyExponentBase64,
       'private_key_modulus': privateKeyModulusBase64,
       'private_key_exponent': privateKeyExponentBase64,
+      'p': (keyPair.privateKey as RSAPrivateKey).p.toString(),
+      'q': (keyPair.privateKey as RSAPrivateKey).q.toString(),
     };
 
     final keyPairJson = jsonEncode(keyPairMap);

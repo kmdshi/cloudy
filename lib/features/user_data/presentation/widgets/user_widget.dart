@@ -29,7 +29,7 @@ class UserWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  userName,
+                  userName.substring(0, 5),
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 5),

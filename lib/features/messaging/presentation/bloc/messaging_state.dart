@@ -14,8 +14,10 @@ class MessagingLoading extends MessagingState {}
 
 class MessagingLoaded extends MessagingState {
   final Uint8List dialogKey;
+  final Stream<Map<String, dynamic>> chatHistory;
   const MessagingLoaded({
     required this.dialogKey,
+    required this.chatHistory,
   });
 
   @override
@@ -23,11 +25,11 @@ class MessagingLoaded extends MessagingState {
 }
 
 class MessagingFailure extends MessagingState {
-  final String messsage;
+  final String message;
   const MessagingFailure({
-    required this.messsage,
+    required this.message,
   });
 
   @override
-  List<Object> get props => [messsage];
+  List<Object> get props => [message];
 }

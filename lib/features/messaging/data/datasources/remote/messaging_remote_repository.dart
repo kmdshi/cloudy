@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:math';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,10 +18,14 @@ class MessagingRemoteRepository {
   Future<Uint8List> startDialog(
     String initiatorAID,
     String secondAID,
-    String  fPublicKeyModulus,
-    String  fPublicKeyExponent,
-    String  sPublicKeyModulus,
-    String  sPublicKeyExponent,
+    String fPublicKeyModulus,
+    String fPublicKeyExponent,
+    String fPrivateKeyModulus,
+    String fPrivatKeyExponent,
+    String p,
+    String q,
+    String sPublicKeyModulus,
+    String sPublicKeyExponent,
   ) async {
     final sortedAIDs = [initiatorAID.substring(0, 4), secondAID.substring(0, 4)]
       ..sort();
@@ -46,8 +50,8 @@ class MessagingRemoteRepository {
       );
 
       final firebaseData = {
-        sortedAIDs[0]: firstUserKey,
-        sortedAIDs[1]: secondUserKey,
+        sortedAIDs[0]: base64.encode(firstUserKey),
+        sortedAIDs[1]: base64.encode(secondUserKey),
         'messages': {},
       };
       await fireStoreDB.collection('dialogs').doc(mutualAID).set(firebaseData);
@@ -60,7 +64,21 @@ class MessagingRemoteRepository {
         throw ('Something went wrong');
       }
 
-      return data[sortedAIDs[0]] ?? data[sortedAIDs[1]];
+      final initiatorKey = data[initiatorAID.substring(0, 4)];
+      if (initiatorKey != null) {
+        final encryptedKey = cipherService.decryptWithPrivateKey(
+          initiatorKey,
+          fPrivateKeyModulus,
+          fPrivatKeyExponent,
+          p,
+          q,
+        );
+        print('ENCRYPTED KEY: $encryptedKey');
+        final decodedData = base64.decode(encryptedKey);
+        return decodedData;
+      } else {
+        throw ('No key data found');
+      }
     }
   }
 
@@ -115,7 +133,7 @@ class MessagingRemoteRepository {
         Map<String, dynamic>? data = snapshot.data();
         return data?['messages'] ?? {};
       } else {
-        return {}; 
+        return {};
       }
     });
   }

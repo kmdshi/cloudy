@@ -13,6 +13,8 @@ import 'package:cloud_firestore/cloud_firestore.dart' as _i974;
 import 'package:cryptome/core/DI/dependency_config.dart' as _i982;
 import 'package:cryptome/core/services/cipher_service.dart' as _i900;
 import 'package:cryptome/core/services/deeplink_handler.dart' as _i998;
+import 'package:cryptome/features/messaging/data/datasources/local/messaging_local_repository.dart'
+    as _i177;
 import 'package:cryptome/features/messaging/data/datasources/remote/messaging_remote_repository.dart'
     as _i1006;
 import 'package:cryptome/features/messaging/data/repository/messaging_repository_impl.dart'
@@ -75,6 +77,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i998.DeepLinkHandlerService>(
         () => injectionModule.deepLinkHandlerService());
     gh.lazySingleton<_i247.UserDataLocalRepo>(() => _i247.UserDataLocalRepo());
+    gh.lazySingleton<_i177.MessagingLocalRepository>(
+        () => _i177.MessagingLocalRepository());
     gh.lazySingleton<_i989.RegistrationRemoteSource>(
         () => _i989.RegistrationRemoteSource(
               fireStoreDB: gh<_i974.FirebaseFirestore>(),
@@ -90,6 +94,13 @@ extension GetItInjectableX on _i174.GetIt {
           fireStoreDB: gh<_i974.FirebaseFirestore>(),
           firestorage: gh<_i457.FirebaseStorage>(),
         ));
+    gh.lazySingleton<_i12.MessagingRepository>(
+        () => _i25.MessagingRepositoryImpl(
+              messagingRemoteRepository: gh<_i1006.MessagingRemoteRepository>(),
+              messagingLocalRepository: gh<_i177.MessagingLocalRepository>(),
+            ));
+    gh.factory<_i951.MessagingBloc>(() => _i951.MessagingBloc(
+        messagingRepository: gh<_i12.MessagingRepository>()));
     gh.lazySingleton<_i790.RegistrationLocalSource>(() =>
         _i790.RegistrationLocalSource(
             cipherService: gh<_i900.CipherService>()));
@@ -97,11 +108,6 @@ extension GetItInjectableX on _i174.GetIt {
           messagingLocalRepo: gh<_i247.UserDataLocalRepo>(),
           messagingRemoteRepo: gh<_i683.UserDataRemoteRepo>(),
         ));
-    gh.lazySingleton<_i12.MessagingRepository>(() =>
-        _i25.MessagingRepositoryImpl(
-            messagingRemoteRepository: gh<_i1006.MessagingRemoteRepository>()));
-    gh.factory<_i951.MessagingBloc>(() => _i951.MessagingBloc(
-        messagingRepository: gh<_i12.MessagingRepository>()));
     gh.lazySingleton<_i547.RegistrationRepository>(
         () => _i31.RegistrationRepositoryImpl(
               registrationLocalSource: gh<_i790.RegistrationLocalSource>(),

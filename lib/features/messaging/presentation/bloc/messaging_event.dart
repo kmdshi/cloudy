@@ -16,3 +16,12 @@ class DialogInitializationEvent extends MessagingEvent {
   @override
   List<Object> get props => [initialDataValue];
 }
+
+class MessagesUpdated extends MessagingEvent {
+  final Map<String, dynamic> messages;
+
+  const MessagesUpdated({required this.messages});
+
+  @override
+  List<Object> get props => [messages];
+}

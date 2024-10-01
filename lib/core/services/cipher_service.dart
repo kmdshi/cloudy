@@ -48,19 +48,11 @@ class CipherService {
     return secureRandom;
   }
 
-  String encryptWithPublicKey(String data, PublicKey publicKey) {
+  String encryptWithKey(String data, PublicKey key) {
     final encryptor = RSAEngine()
-      ..init(true, PublicKeyParameter<RSAPublicKey>(publicKey));
+      ..init(true, PublicKeyParameter<RSAPublicKey>(key));
     final encrypted = _processInBlocks(encryptor, utf8.encode(data));
     return base64.encode(encrypted);
-  }
-
-  String decryptWithPrivateKey(String base64Data, PrivateKey privateKey) {
-    final decryptor = RSAEngine()
-      ..init(false, PrivateKeyParameter<RSAPrivateKey>(privateKey));
-    final encryptedBytes = base64.decode(base64Data);
-    final decrypted = _processInBlocks(decryptor, encryptedBytes);
-    return utf8.decode(decrypted);
   }
 
   Uint8List _processInBlocks(RSAEngine engine, Uint8List input) {
@@ -108,5 +100,55 @@ class CipherService {
       ..init(true, PublicKeyParameter<RSAPublicKey>(rsaPublicKey));
 
     return encryptor.process(symmetricKey);
+  }
+
+  String decryptWithPrivateKey(
+    String base64Data,
+    String base64Modulus,
+    String base64PrivateExponent,
+    String p,
+    String q,
+  ) {
+    final privateKey = createPrivateKeyFromModulusAndExponent(
+        base64Modulus, base64PrivateExponent, p, q);
+
+    final decryptor = RSAEngine()
+      ..init(false, PrivateKeyParameter<RSAPrivateKey>(privateKey));
+
+    final encryptedBytes = base64.decode(base64Data);
+
+    final decrypted = _processInBlocks(decryptor, encryptedBytes);
+
+    return utf8.decode(decrypted);
+  }
+
+  RSAPrivateKey createPrivateKeyFromModulusAndExponent(
+    String base64Modulus,
+    String base64PrivateExponent,
+    String p,
+    String q,
+  ) {
+    Uint8List modulusBytes = base64.decode(base64Modulus);
+    Uint8List privateExponentBytes = base64.decode(base64PrivateExponent);
+
+    BigInt modulus = BigInt.parse(
+        modulusBytes
+            .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+            .join(),
+        radix: 16);
+    BigInt privateExponent = BigInt.parse(
+        privateExponentBytes
+            .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+            .join(),
+        radix: 16);
+
+    final privateKey = RSAPrivateKey(
+      modulus,
+      privateExponent,
+      BigInt.parse(p),
+      BigInt.parse(q),
+    );
+
+    return privateKey;
   }
 }
