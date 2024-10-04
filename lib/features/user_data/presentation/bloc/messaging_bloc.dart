@@ -1,5 +1,5 @@
-import 'package:cryptome/features/user_data/domain/entities/self_entity.dart';
-import 'package:cryptome/features/user_data/domain/repository/user_data_repository.dart';
+import 'package:cloudy/features/user_data/domain/entities/self_entity.dart';
+import 'package:cloudy/features/user_data/domain/repository/user_data_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';

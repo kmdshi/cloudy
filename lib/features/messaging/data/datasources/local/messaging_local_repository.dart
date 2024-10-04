@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:cryptome/core/DI/dependency_config.dart';
+import 'package:cloudy/core/DI/dependency_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
 @lazySingleton
 class MessagingLocalRepository {
-  Future<Map<String, String>> getSecureKeys() async {
+  Future<Map<String, BigInt>> getSecureKeys() async {
     final secureStorage = getIt<FlutterSecureStorage>();
 
     final keys = await secureStorage.read(key: 'cipher_keys');
@@ -15,12 +15,12 @@ class MessagingLocalRepository {
       final keysDetail = jsonDecode(keys);
 
       return {
-        'public_key_modulus': keysDetail['public_key_modulus'],
-        'public_key_exponent': keysDetail['public_key_exponent'],
-        'private_key_modulus': keysDetail['private_key_modulus'],
-        'private_key_exponent': keysDetail['private_key_exponent'],
-        'p': keysDetail['p'],
-        'q': keysDetail['q'],
+        'nPub': BigInt.parse(keysDetail['publicKey']['n']),
+        'ePub': BigInt.parse(keysDetail['publicKey']['e']),
+        'nPriv': BigInt.parse(keysDetail['privateKey']['n']),
+        'dPriv': BigInt.parse(keysDetail['privateKey']['d']),
+        'pPriv': BigInt.parse(keysDetail['privateKey']['p']),
+        'qPriv': BigInt.parse(keysDetail['privateKey']['q']),
       };
     } else {
       throw Exception('Secure keys not found');

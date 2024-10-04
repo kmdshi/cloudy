@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:cryptome/core/services/image_picker.dart';
-import 'package:cryptome/features/registration/domain/entities/person_entity.dart';
-import 'package:cryptome/features/registration/presentation/widgets/agreement_widget.dart';
-import 'package:cryptome/features/registration/presentation/widgets/avatar_widget.dart';
-import 'package:cryptome/features/registration/presentation/widgets/option_widget.dart';
+import 'package:cloudy/core/services/image_picker.dart';
+import 'package:cloudy/features/registration/domain/entities/person_entity.dart';
+import 'package:cloudy/features/registration/presentation/widgets/agreement_widget.dart';
+import 'package:cloudy/features/registration/presentation/widgets/avatar_widget.dart';
+import 'package:cloudy/features/registration/presentation/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

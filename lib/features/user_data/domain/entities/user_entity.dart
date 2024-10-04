@@ -1,15 +1,17 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:pointycastle/pointycastle.dart';
+
 class UserEntity {
   final String AID;
   final String username;
   final String urlAvatar;
-  final String  publicKeyModulus;
-  final String  publicKeyExponent;
+  final BigInt nPub;
+  final BigInt ePub;
   UserEntity({
     required this.AID,
     required this.username,
     required this.urlAvatar,
-    required this.publicKeyModulus,
-    required this.publicKeyExponent,
+    required this.nPub,
+    required this.ePub,
   });
 }

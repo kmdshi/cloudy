@@ -1,7 +1,6 @@
-import 'package:cryptome/core/theme/color_theme.dart';
-import 'package:cryptome/core/theme/text_theme.dart';
+import 'package:cloudy/core/theme/color_theme.dart';
+import 'package:cloudy/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 class TCiphermeTheme {

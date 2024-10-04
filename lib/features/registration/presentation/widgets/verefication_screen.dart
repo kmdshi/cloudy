@@ -1,11 +1,13 @@
+import 'dart:developer';
+
+import 'package:cloudy/features/registration/domain/entities/person_entity.dart';
+import 'package:cloudy/features/registration/presentation/bloc/registration_bloc.dart';
+import 'package:cloudy/features/registration/presentation/widgets/keyphrase_widget.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:cryptome/features/registration/domain/entities/person_entity.dart';
-import 'package:cryptome/features/registration/presentation/bloc/registration_bloc.dart';
-import 'package:cryptome/features/registration/presentation/widgets/keyphrase_widget.dart';
 
 class VereficationScreen extends StatefulWidget {
   final PersonEntity person;
@@ -34,7 +36,7 @@ class _VereficationScreenState extends State<VereficationScreen> {
             context.push('/start/create/verif/success');
           });
         } else if (state is RegistrationFailure) {
-          print(state.message);
+          log(state.message);
         }
       },
       child: Scaffold(
@@ -79,7 +81,7 @@ class _VereficationScreenState extends State<VereficationScreen> {
                           .read<RegistrationBloc>()
                           .add(CreatePersonEvent(personEntity: widget.person));
                     } else {
-                      print("ПЛОХО");
+                      log("ПЛОХО");
                     }
                   },
                   child: const Text('Verify'),

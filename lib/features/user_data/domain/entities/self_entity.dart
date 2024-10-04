@@ -1,8 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, non_constant_identifier_names
-import 'package:cryptome/features/user_data/domain/entities/user_entity.dart';
+import 'package:cloudy/features/user_data/domain/entities/user_entity.dart';
+import 'package:pointycastle/api.dart';
 
 class SelfEntity {
-  final Map<String, String> keys;
+  final AsymmetricKeyPair<PublicKey, PrivateKey> keys;
   final String AID;
   final bool urlStatus;
   final List<UserEntity> contacts;
@@ -14,8 +15,10 @@ class SelfEntity {
     required this.contacts,
   });
 
+  
+
   SelfEntity copyWith({
-    Map<String, String>? keys,
+    AsymmetricKeyPair<PublicKey, PrivateKey>? keys,
     String? AID,
     bool? urlStatus,
     List<UserEntity>? contacts,

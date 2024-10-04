@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:cryptome/core/theme/color_theme.dart';
+import 'package:cloudy/core/theme/color_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:mobkit_dashed_border/mobkit_dashed_border.dart';
 

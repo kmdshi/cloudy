@@ -1,4 +1,4 @@
-import 'package:cryptome/core/theme/color_theme.dart';
+import 'package:cloudy/core/theme/color_theme.dart';
 import 'package:flutter/material.dart';
 
 class OptionWidget extends StatelessWidget {

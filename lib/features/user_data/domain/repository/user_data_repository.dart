@@ -1,4 +1,4 @@
-import 'package:cryptome/features/user_data/domain/entities/self_entity.dart';
+import 'package:cloudy/features/user_data/domain/entities/self_entity.dart';
 
 abstract class UserDataRepository {
   Future<SelfEntity> handleSelfEntity();

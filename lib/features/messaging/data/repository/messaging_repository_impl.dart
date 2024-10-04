@@ -1,18 +1,22 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
-import 'package:cryptome/features/messaging/data/datasources/local/messaging_local_repository.dart';
-import 'package:cryptome/features/messaging/data/datasources/remote/messaging_remote_repository.dart';
-import 'package:cryptome/features/messaging/domain/repository/messaging_repository.dart';
+import 'package:cloudy/core/services/cipher_service.dart';
+import 'package:cloudy/features/messaging/data/datasources/local/messaging_local_repository.dart';
+import 'package:cloudy/features/messaging/data/datasources/remote/messaging_remote_repository.dart';
+import 'package:cloudy/features/messaging/domain/repository/messaging_repository.dart';
 import 'package:injectable/injectable.dart';
+import 'package:pointycastle/api.dart';
 
 @LazySingleton(as: MessagingRepository)
 class MessagingRepositoryImpl implements MessagingRepository {
   final MessagingRemoteRepository messagingRemoteRepository;
   final MessagingLocalRepository messagingLocalRepository;
+  final CipherService cipherService;
   MessagingRepositoryImpl({
     required this.messagingRemoteRepository,
     required this.messagingLocalRepository,
+    required this.cipherService,
   });
   @override
   Stream<Map<String, dynamic>> getMessagesStream(
@@ -29,27 +33,29 @@ class MessagingRepositoryImpl implements MessagingRepository {
 
   @override
   Future<Uint8List> startDialog(
-      String initiatorAID,
-      String secondAID,
-      String fPublicKeyModulus,
-      String fPublicKeyExponent,
-      String sPublicKeyModulus,
-      String sPublicKeyExponent) async {
+    String initiatorAID,
+    String secondAID,
+    PublicKey secondPublicKey,
+  ) async {
     final keys = await messagingLocalRepository.getSecureKeys();
-    final privateKey = keys['private_key_modulus']!;
-    final privateExponent = keys['private_key_exponent']!;
-    final p = keys['p']!;
-    final q = keys['q']!;
+
+    final selfPublicKey = cipherService.regeneratePublicKey({
+      'n': keys['nPub'],
+      'e': keys['ePub'],
+    });
+    final selfPrivateKey = cipherService.regeneratePrivateKey({
+      'n': keys['nPriv'],
+      'd': keys['dPriv'],
+      'p': keys['pPriv'],
+      'q': keys['qPriv'],
+    });
+
     return messagingRemoteRepository.startDialog(
-        initiatorAID,
-        secondAID,
-        fPublicKeyModulus,
-        fPublicKeyExponent,
-        privateKey,
-        privateExponent,
-        p,
-        q,
-        sPublicKeyModulus,
-        sPublicKeyExponent);
+      initiatorAID,
+      secondAID,
+      selfPublicKey,
+      selfPrivateKey,
+      secondPublicKey,
+    );
   }
 }

@@ -2,7 +2,7 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
-import 'package:cryptome/core/DI/dependency_config.dart';
+import 'package:cloudy/core/DI/dependency_config.dart';
 import 'package:flutter/material.dart';
 
 class DeepLinkHandlerService {

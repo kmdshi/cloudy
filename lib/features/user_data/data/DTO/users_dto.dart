@@ -1,15 +1,17 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:pointycastle/pointycastle.dart';
+
 class UserDto {
   final String AID;
   final String name;
   final String imageUrl;
-   final String  publicKeyModulus;
-  final String  publicKeyExponent;
+  final BigInt nPub;
+  final BigInt ePub;
   UserDto({
     required this.AID,
     required this.name,
     required this.imageUrl,
-    required this.publicKeyModulus,
-    required this.publicKeyExponent,
+    required this.nPub,
+    required this.ePub,
   });
 }

@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:cryptome/core/DI/dependency_config.dart';
-import 'package:cryptome/core/services/cipher_service.dart';
+import 'package:cloudy/core/DI/dependency_config.dart';
+import 'package:cloudy/core/services/cipher_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,39 +35,32 @@ class RegistrationLocalSource {
     await prefs.setString('session_information', sessionInfoString);
   }
 
-  Future<Map<String, String>> createKeyPairs(
+  Future<Map<String, dynamic>> createKeyPairs(
       String nickname, List<String> keyPhrase) async {
     final secureStorage = getIt<FlutterSecureStorage>();
 
     String? keyJson = await secureStorage.read(key: 'cipher_keys');
 
     if (keyJson != null) {
-      return Map<String, String>.from(jsonDecode(keyJson));
+      return Map<String, BigInt>.from(jsonDecode(keyJson));
     }
 
-    final keyPair = cipherService.generateKeyPairFromSeed(nickname, keyPhrase);
+    final keyPair = await cipherService.createKeyPair(nickname, keyPhrase);
 
-    final publicKeyModulusBytes = CryptoUtils.rsaPublicKeyModulusToBytes(
-        keyPair.publicKey as RSAPublicKey);
-    final publicKeyExponentBytes = CryptoUtils.rsaPublicKeyExponentToBytes(
-        keyPair.publicKey as RSAPublicKey);
-    final privateKeyModulusBytes = CryptoUtils.rsaPrivateKeyModulusToBytes(
-        keyPair.privateKey as RSAPrivateKey);
-    final privateKeyExponentBytes = CryptoUtils.rsaPrivateKeyExponentToBytes(
-        keyPair.privateKey as RSAPrivateKey);
-
-    final publicKeyModulusBase64 = base64Encode(publicKeyModulusBytes);
-    final publicKeyExponentBase64 = base64Encode(publicKeyExponentBytes);
-    final privateKeyModulusBase64 = base64Encode(privateKeyModulusBytes);
-    final privateKeyExponentBase64 = base64Encode(privateKeyExponentBytes);
+    final RSAPublicKey publicKey = keyPair.publicKey as RSAPublicKey;
+    final RSAPrivateKey privateKey = keyPair.privateKey as RSAPrivateKey;
 
     final keyPairMap = {
-      'public_key_modulus': publicKeyModulusBase64,
-      'public_key_exponent': publicKeyExponentBase64,
-      'private_key_modulus': privateKeyModulusBase64,
-      'private_key_exponent': privateKeyExponentBase64,
-      'p': (keyPair.privateKey as RSAPrivateKey).p.toString(),
-      'q': (keyPair.privateKey as RSAPrivateKey).q.toString(),
+      'publicKey': {
+        'n': publicKey.n.toString(),
+        'e': publicKey.publicExponent.toString(),
+      },
+      'privateKey': {
+        'n': privateKey.modulus.toString(),
+        'd': privateKey.privateExponent.toString(),
+        'p': privateKey.p.toString(),
+        'q': privateKey.q.toString(),
+      },
     };
 
     final keyPairJson = jsonEncode(keyPairMap);

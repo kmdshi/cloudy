@@ -2,8 +2,8 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cryptome/core/services/cipher_service.dart';
-import 'package:cryptome/features/registration/domain/entities/person_entity.dart';
+import 'package:cloudy/core/services/cipher_service.dart';
+import 'package:cloudy/features/registration/domain/entities/person_entity.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
 
@@ -20,7 +20,7 @@ class RegistrationRemoteSource {
 
   Future<void> addPerson(
     PersonEntity personEntity,
-    Map<String, String> keys,
+    Map<String, dynamic> keys,
   ) async {
     final AID =
         cipherService.createAID(personEntity.nickname, personEntity.keyPhrase);
@@ -29,9 +29,9 @@ class RegistrationRemoteSource {
 
     Map<String, dynamic> data = personEntity.toMap();
 
-    data['public_key_modulus'] = keys['public_key_modulus'];
-    data['public_key_exponent'] = keys['public_key_exponent'];
-
+    data['publicKey'] = keys['publicKey'];
+    if (personEntity.nickname != '') data['nickname'] = personEntity.nickname;
+    
     if (personEntity.avatar != null) {
       await uploadAvatar(personEntity.avatar!, AID);
     }

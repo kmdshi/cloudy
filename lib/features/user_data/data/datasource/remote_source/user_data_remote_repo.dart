@@ -2,7 +2,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cryptome/features/user_data/data/DTO/users_dto.dart';
+import 'package:cloudy/features/user_data/data/DTO/users_dto.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
 
@@ -68,8 +68,8 @@ class UserDataRemoteRepo {
         return UserDto(
           name: data['name'] ?? userID,
           imageUrl: avatarUrl,
-          publicKeyModulus: data['public_key_modulus'],
-          publicKeyExponent: data['public_key_exponent'],
+          ePub: BigInt.parse(data['publicKey']['e']),
+          nPub: BigInt.parse(data['publicKey']['n']),
           AID: userID,
         );
       } catch (e) {

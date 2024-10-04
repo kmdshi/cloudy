@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:cryptome/features/messaging/domain/entities/initial_data_value.dart';
-import 'package:cryptome/features/messaging/domain/repository/messaging_repository.dart';
+import 'package:cloudy/features/messaging/domain/entities/initial_data_value.dart';
+import 'package:cloudy/features/messaging/domain/repository/messaging_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -20,6 +20,7 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
   }) : super(MessagingInitial()) {
     on<DialogInitializationEvent>(_dialogInit);
     on<MessagesUpdated>(_updatedMessages);
+    on<SendMessageEvent>(_sendMessage);
   }
 
   @override
@@ -35,18 +36,39 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
           event.initialDataValue.initiatorAID,
           event.initialDataValue.secondAID);
       final dialogKey = await messagingRepository.startDialog(
-          event.initialDataValue.initiatorAID,
-          event.initialDataValue.secondAID,
-          event.initialDataValue.fPublicKeyModulus,
-          event.initialDataValue.fPublicKeyExponent,
-          event.initialDataValue.sPublicKeyModulus,
-          event.initialDataValue.sPublicKeyExponent);
+        event.initialDataValue.initiatorAID,
+        event.initialDataValue.secondAID,
+        event.initialDataValue.secondPublicKey,
+      );
       emit(MessagingLoaded(
           dialogKey: dialogKey, chatHistory: chatHistoryStream));
 
       _messagesSubscription = chatHistoryStream.listen((messages) {
         add(MessagesUpdated(messages: messages));
       });
+    } catch (e) {
+      emit(MessagingFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> _sendMessage(
+      SendMessageEvent event, Emitter<MessagingState> emit) async {
+    try {
+      messagingRepository.sendMessage(
+        event.message,
+        event.dialogKey,
+        event.initiatorID,
+        event.secondID,
+      );
+
+      if (state is MessagingLoaded) {
+        final currentState = state as MessagingLoaded;
+
+        emit(MessagingLoaded(
+          dialogKey: currentState.dialogKey,
+          chatHistory: currentState.chatHistory,
+        ));
+      }
     } catch (e) {
       emit(MessagingFailure(message: e.toString()));
     }

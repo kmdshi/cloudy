@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-import 'package:cryptome/core/DI/dependency_config.dart';
-import 'package:cryptome/features/messaging/domain/entities/initial_data_value.dart';
-import 'package:cryptome/features/messaging/presentation/widgets/communication_screen.dart';
-import 'package:cryptome/features/user_data/presentation/widgets/general_screen.dart';
-import 'package:cryptome/features/user_data/presentation/widgets/import_adress_screen.dart';
-import 'package:cryptome/features/registration/domain/entities/person_entity.dart';
-import 'package:cryptome/features/registration/presentation/widgets/onboarding_screen.dart';
-import 'package:cryptome/features/registration/presentation/widgets/registration_screen.dart';
-import 'package:cryptome/features/registration/presentation/widgets/restore_screen.dart';
-import 'package:cryptome/features/registration/presentation/widgets/verefication_screen.dart';
-import 'package:cryptome/features/registration/presentation/widgets/verify_sucess_screen.dart';
+import 'package:cloudy/core/DI/dependency_config.dart';
+import 'package:cloudy/features/messaging/domain/entities/initial_data_value.dart';
+import 'package:cloudy/features/messaging/presentation/widgets/communication_screen.dart';
+import 'package:cloudy/features/registration/domain/entities/person_entity.dart';
+import 'package:cloudy/features/registration/presentation/widgets/onboarding_screen.dart';
+import 'package:cloudy/features/registration/presentation/widgets/registration_screen.dart';
+import 'package:cloudy/features/registration/presentation/widgets/restore_screen.dart';
+import 'package:cloudy/features/registration/presentation/widgets/verefication_screen.dart';
+import 'package:cloudy/features/registration/presentation/widgets/verify_sucess_screen.dart';
+import 'package:cloudy/features/user_data/presentation/widgets/general_screen.dart';
+import 'package:cloudy/features/user_data/presentation/widgets/import_adress_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';

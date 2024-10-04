@@ -1,14 +1,16 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:cryptome/core/gen/assets.gen.dart';
-import 'package:cryptome/core/theme/color_theme.dart';
-import 'package:cryptome/features/messaging/domain/entities/initial_data_value.dart';
-import 'package:cryptome/features/user_data/presentation/bloc/messaging_bloc.dart';
-import 'package:cryptome/features/user_data/presentation/widgets/user_widget.dart';
+import 'package:cloudy/core/gen/assets.gen.dart';
+import 'package:cloudy/core/services/cipher_service.dart';
+import 'package:cloudy/core/theme/color_theme.dart';
+import 'package:cloudy/features/messaging/domain/entities/initial_data_value.dart';
+import 'package:cloudy/features/user_data/presentation/bloc/messaging_bloc.dart';
+import 'package:cloudy/features/user_data/presentation/widgets/user_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pointycastle/pointycastle.dart' as castle;
 import 'package:qr_flutter/qr_flutter.dart';
 
 class MessagesScreen extends StatefulWidget {
@@ -92,12 +94,15 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   itemBuilder: (_, index) {
                     final currentUser = user.contacts[index];
                     final data = InitialDataValueEntity(
-                        initiatorAID: user.AID,
-                        secondAID: currentUser.AID,
-                        fPublicKeyExponent: user.keys['public_key_exponent']!,
-                        fPublicKeyModulus: user.keys['public_key_modulus']!,
-                        sPublicKeyExponent: currentUser.publicKeyExponent,
-                        sPublicKeyModulus: currentUser.publicKeyModulus);
+                      initiatorAID: user.AID,
+                      secondAID: currentUser.AID,
+                      firstPublicKey: user.keys.publicKey,
+                      firstPrivateKey: user.keys.privateKey,
+                      secondPublicKey: CipherService().regeneratePublicKey({
+                        'n': currentUser.nPub,
+                        'e': currentUser.ePub,
+                      }),
+                    );
                     return UserWidget(
                       avatarUrl: currentUser.urlAvatar,
                       userName: currentUser.username,

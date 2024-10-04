@@ -1,5 +1,5 @@
-import 'package:cryptome/core/gen/assets.gen.dart';
-import 'package:cryptome/core/theme/color_theme.dart';
+import 'package:cloudy/core/gen/assets.gen.dart';
+import 'package:cloudy/core/theme/color_theme.dart';
 import 'package:flutter/material.dart';
 
 class InputWidget extends StatelessWidget {

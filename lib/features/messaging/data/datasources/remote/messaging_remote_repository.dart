@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cryptome/core/services/cipher_service.dart';
+import 'package:cloudy/core/services/cipher_service.dart';
+import 'package:encrypt/encrypt.dart';
 import 'package:injectable/injectable.dart';
+import 'package:pointycastle/pointycastle.dart';
 
 @lazySingleton
 class MessagingRemoteRepository {
@@ -18,14 +20,9 @@ class MessagingRemoteRepository {
   Future<Uint8List> startDialog(
     String initiatorAID,
     String secondAID,
-    String fPublicKeyModulus,
-    String fPublicKeyExponent,
-    String fPrivateKeyModulus,
-    String fPrivatKeyExponent,
-    String p,
-    String q,
-    String sPublicKeyModulus,
-    String sPublicKeyExponent,
+    PublicKey initiatorPublicKey,
+    PrivateKey firstPrivateKey,
+    PublicKey secondPublicKey,
   ) async {
     final sortedAIDs = [initiatorAID.substring(0, 4), secondAID.substring(0, 4)]
       ..sort();
@@ -35,28 +32,22 @@ class MessagingRemoteRepository {
         await fireStoreDB.collection('dialogs').doc(mutualAID).get();
 
     if (!snapshot.exists) {
-      final commonSymmeticKey = cipherService.generateSymmetricKey();
+      final commonSymmeticKey = cipherService.generateRandomAESKey();
 
-      final firstUserKey = cipherService.encryptDialogKeyWithPublicUserKey(
-        commonSymmeticKey,
-        fPublicKeyModulus,
-        fPublicKeyExponent,
-      );
+      final firstUserKey = cipherService.encryptSymmetricKey(
+          commonSymmeticKey, initiatorPublicKey);
 
-      final secondUserKey = cipherService.encryptDialogKeyWithPublicUserKey(
-        commonSymmeticKey,
-        sPublicKeyModulus,
-        sPublicKeyExponent,
-      );
+      final secondUserKey =
+          cipherService.encryptSymmetricKey(commonSymmeticKey, secondPublicKey);
 
       final firebaseData = {
-        sortedAIDs[0]: base64.encode(firstUserKey),
-        sortedAIDs[1]: base64.encode(secondUserKey),
+        initiatorAID.substring(0, 4): firstUserKey,
+        secondAID.substring(0, 4): secondUserKey,
         'messages': {},
       };
       await fireStoreDB.collection('dialogs').doc(mutualAID).set(firebaseData);
 
-      return firstUserKey;
+      return base64Decode(firstUserKey);
     } else {
       Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
 
@@ -66,16 +57,12 @@ class MessagingRemoteRepository {
 
       final initiatorKey = data[initiatorAID.substring(0, 4)];
       if (initiatorKey != null) {
-        final encryptedKey = cipherService.decryptWithPrivateKey(
+        final decryptedKey = cipherService.decryptSymmetricKey(
           initiatorKey,
-          fPrivateKeyModulus,
-          fPrivatKeyExponent,
-          p,
-          q,
+          firstPrivateKey,
         );
-        print('ENCRYPTED KEY: $encryptedKey');
-        final decodedData = base64.decode(encryptedKey);
-        return decodedData;
+        print('DECRYPTED KEY: ${base64.encode(decryptedKey)}');
+        return decryptedKey;
       } else {
         throw ('No key data found');
       }
@@ -105,10 +92,16 @@ class MessagingRemoteRepository {
       }
 
       final messageId = DateTime.now().millisecondsSinceEpoch.toString();
+      final encryptedMessage = cipherService.encryptMessage(
+        message,
+        IV.fromUtf8('1234567890123456'),
+        base64Encode(dialogKey),
+      );
+
       final newMessage = {
         'id': messageId,
         'sender': initiatorAID,
-        'message': message,
+        'message': encryptedMessage,
         'timestamp': FieldValue.serverTimestamp(),
       };
 
