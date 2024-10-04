@@ -2,7 +2,6 @@ import 'package:cloudy/core/gen/assets.gen.dart';
 import 'package:cloudy/features/user_data/presentation/widgets/custom_icon_button_widget.dart';
 import 'package:cloudy/features/user_data/presentation/widgets/custom_tabbar_widget.dart';
 import 'package:cloudy/features/user_data/presentation/widgets/messages_screen.dart';
-import 'package:cloudy/temp_screen.dart';
 import 'package:flutter/material.dart';
 
 class GeneralScreen extends StatefulWidget {
@@ -53,8 +52,9 @@ class _GeneralScreenState extends State<GeneralScreen> {
               padding: const EdgeInsets.only(right: 20),
               child: CustomIconButtonWidget(
                 iconPath: Assets.icons.settingIcon.path,
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => TempScreen())),
+                onTap: () {},
+                // onTap: () => Navigator.push(context,
+                //     MaterialPageRoute(builder: (context) => TempScreen())),
               ),
             ),
           ],
