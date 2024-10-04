@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:cloudy/features/messaging/domain/entities/initial_data_value.dart';
+import 'package:cloudy/features/messaging/domain/entities/message_entity.dart';
 import 'package:cloudy/features/messaging/domain/repository/messaging_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +15,7 @@ part 'messaging_state.dart';
 @injectable
 class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
   final MessagingRepository messagingRepository;
-  StreamSubscription<Map<String, dynamic>>? _messagesSubscription;
+  StreamSubscription<List<MessageEntity>>? _messagesSubscription;
 
   MessagingBloc({
     required this.messagingRepository,
@@ -23,23 +25,22 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     on<SendMessageEvent>(_sendMessage);
   }
 
-  @override
-  Future<void> close() {
-    _messagesSubscription?.cancel();
-    return super.close();
+  Future<void> closeSubcription() async {
+    await _messagesSubscription?.cancel();
   }
 
   Future<void> _dialogInit(
       DialogInitializationEvent event, Emitter<MessagingState> emit) async {
     try {
-      final chatHistoryStream = messagingRepository.getMessagesStream(
-          event.initialDataValue.initiatorAID,
-          event.initialDataValue.secondAID);
       final dialogKey = await messagingRepository.startDialog(
         event.initialDataValue.initiatorAID,
         event.initialDataValue.secondAID,
         event.initialDataValue.secondPublicKey,
       );
+      final chatHistoryStream = messagingRepository.getMessagesStream(
+          event.initialDataValue.initiatorAID,
+          event.initialDataValue.secondAID,
+          dialogKey);
       emit(MessagingLoaded(
           dialogKey: dialogKey, chatHistory: chatHistoryStream));
 
@@ -60,15 +61,6 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
         event.initiatorID,
         event.secondID,
       );
-
-      if (state is MessagingLoaded) {
-        final currentState = state as MessagingLoaded;
-
-        emit(MessagingLoaded(
-          dialogKey: currentState.dialogKey,
-          chatHistory: currentState.chatHistory,
-        ));
-      }
     } catch (e) {
       emit(MessagingFailure(message: e.toString()));
     }

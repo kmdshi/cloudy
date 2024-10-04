@@ -10,6 +10,7 @@ sealed class MessagingEvent extends Equatable {
 
 class DialogInitializationEvent extends MessagingEvent {
   final InitialDataValueEntity initialDataValue;
+
   const DialogInitializationEvent({
     required this.initialDataValue,
   });
@@ -30,11 +31,16 @@ class SendMessageEvent extends MessagingEvent {
   });
 
   @override
-  List<Object> get props => [message, dialogKey, initiatorID, secondID];
+  List<Object> get props => [
+        message,
+        dialogKey,
+        initiatorID,
+        secondID,
+      ];
 }
 
 class MessagesUpdated extends MessagingEvent {
-  final Map<String, dynamic> messages;
+  final List<MessageEntity> messages;
 
   const MessagesUpdated({required this.messages});
 

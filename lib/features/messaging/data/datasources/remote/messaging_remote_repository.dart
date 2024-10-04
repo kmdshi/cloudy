@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudy/core/services/cipher_service.dart';
-import 'package:encrypt/encrypt.dart';
+import 'package:cloudy/features/messaging/data/DTO/message_dto.dart';
 import 'package:injectable/injectable.dart';
 import 'package:pointycastle/pointycastle.dart';
 
@@ -61,7 +61,6 @@ class MessagingRemoteRepository {
           initiatorKey,
           firstPrivateKey,
         );
-        print('DECRYPTED KEY: ${base64.encode(decryptedKey)}');
         return decryptedKey;
       } else {
         throw ('No key data found');
@@ -92,9 +91,10 @@ class MessagingRemoteRepository {
       }
 
       final messageId = DateTime.now().millisecondsSinceEpoch.toString();
+      final timestamp = Timestamp.now();
+
       final encryptedMessage = cipherService.encryptMessage(
         message,
-        IV.fromUtf8('1234567890123456'),
         base64Encode(dialogKey),
       );
 
@@ -102,7 +102,7 @@ class MessagingRemoteRepository {
         'id': messageId,
         'sender': initiatorAID,
         'message': encryptedMessage,
-        'timestamp': FieldValue.serverTimestamp(),
+        'timestamp': timestamp,
       };
 
       data['messages'][messageId] = newMessage;
@@ -111,7 +111,7 @@ class MessagingRemoteRepository {
     }
   }
 
-  Stream<Map<String, dynamic>> getMessagesStream(
+  Stream<List<MessageDto>> getMessagesStream(
       String initiatorAID, String secondAID) {
     final sortedAIDs = [initiatorAID.substring(0, 4), secondAID.substring(0, 4)]
       ..sort();
@@ -124,9 +124,13 @@ class MessagingRemoteRepository {
         .map((snapshot) {
       if (snapshot.exists) {
         Map<String, dynamic>? data = snapshot.data();
-        return data?['messages'] ?? {};
+        final messagesMap = data?['messages'] ?? {};
+
+        return (messagesMap as Map<String, dynamic>).entries.map((entry) {
+          return MessageDto.fromMap(entry.value as Map<String, dynamic>);
+        }).toList();
       } else {
-        return {};
+        return <MessageDto>[];
       }
     });
   }

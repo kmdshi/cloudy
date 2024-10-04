@@ -14,7 +14,7 @@ class MessagingLoading extends MessagingState {}
 
 class MessagingLoaded extends MessagingState {
   final Uint8List dialogKey;
-  final Stream<Map<String, dynamic>> chatHistory;
+  final Stream<List<MessageEntity>> chatHistory;
   const MessagingLoaded({
     required this.dialogKey,
     required this.chatHistory,

@@ -123,7 +123,8 @@ class CipherService {
     return base64Encode(encrypted);
   }
 
-  String encryptMessage(String plainText, encrypt.IV iv, String symmetricKey) {
+  String encryptMessage(String plainText, String symmetricKey) {
+    final iv = encrypt.IV.fromUtf8('1234567890123456');
     final key = encrypt.Key.fromBase64(symmetricKey);
 
     final encrypter = encrypt.Encrypter(encrypt.AES(key));
@@ -133,8 +134,9 @@ class CipherService {
     return encrypted.base64;
   }
 
-  String decryptMessage(
-      String encryptedText, encrypt.IV iv, String symmetricKey) {
+  String decryptMessage(String encryptedText, String symmetricKey) {
+    final iv = encrypt.IV.fromUtf8('1234567890123456');
+
     final key = encrypt.Key.fromBase64(symmetricKey);
     final encrypter = encrypt.Encrypter(encrypt.AES(key));
 
