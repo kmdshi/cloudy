@@ -56,6 +56,7 @@ class MessagingRemoteRepository {
       }
 
       final initiatorKey = data[initiatorAID.substring(0, 4)];
+      
       if (initiatorKey != null) {
         final decryptedKey = cipherService.decryptSymmetricKey(
           initiatorKey,
@@ -127,8 +128,14 @@ class MessagingRemoteRepository {
         final messagesMap = data?['messages'] ?? {};
 
         return (messagesMap as Map<String, dynamic>).entries.map((entry) {
-          return MessageDto.fromMap(entry.value as Map<String, dynamic>);
-        }).toList();
+          final messageDto =
+              MessageDto.fromMap(entry.value as Map<String, dynamic>).copyWith(
+            isFromInitiator: initiatorAID == entry.value['sender'],
+          );
+
+          return messageDto;
+        }).toList()
+          ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
       } else {
         return <MessageDto>[];
       }

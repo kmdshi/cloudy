@@ -1,19 +1,81 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, non_constant_identifier_names
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloudy/core/services/cipher_service.dart';
+import 'package:cloudy/core/services/date_manipualtions.dart';
+import 'package:cloudy/features/messaging/data/DTO/message_dto.dart';
 import 'package:cloudy/features/user_data/data/DTO/users_dto.dart';
+import 'package:cloudy/features/user_data/domain/entities/last_message_entity.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
+import 'package:pointycastle/api.dart';
 
 @lazySingleton
 class UserDataRemoteRepo {
   final FirebaseFirestore fireStoreDB;
   final FirebaseStorage firestorage;
+  final CipherService cipherService;
+
   UserDataRemoteRepo({
     required this.fireStoreDB,
     required this.firestorage,
+    required this.cipherService,
   });
+
+  Stream<LastMessageEntity?> getLastMessageStream(
+    String initiatorAID,
+    String secondAID,
+    AsymmetricKeyPair<PublicKey, PrivateKey> keys,
+  ) {
+    final dateService = DateManipualtions();
+    final sortedAIDs = [initiatorAID.substring(0, 4), secondAID.substring(0, 4)]
+      ..sort();
+    final mutualAID = '${sortedAIDs[0]}_${sortedAIDs[1]}';
+
+    return fireStoreDB
+        .collection('dialogs')
+        .doc(mutualAID)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        Map<String, dynamic>? data = snapshot.data();
+        final messagesMap = data?['messages'] ?? {};
+
+        final initiatorKey = data![initiatorAID.substring(0, 4)];
+
+        final decryptedKey = cipherService.decryptSymmetricKey(
+          initiatorKey,
+          keys.privateKey,
+        );
+
+        final messages =
+            (messagesMap as Map<String, dynamic>).entries.map((entry) {
+          return MessageDto.fromMap(entry.value as Map<String, dynamic>)
+              .copyWith(
+            isFromInitiator: initiatorAID == entry.value['sender'],
+          );
+        }).toList()
+              ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+        if (messages.isNotEmpty) {
+          final lastMessage = messages.last;
+          return LastMessageEntity(
+            message: cipherService.decryptMessage(
+              lastMessage.message,
+              base64Encode(decryptedKey),
+            ),
+            isFromInitiator: lastMessage.isFromInitiator!,
+            dateTime: dateService.formatMessageDate(lastMessage.timestamp),
+          );
+        }
+        return null;
+      } else {
+        return null;
+      }
+    });
+  }
 
   Future<Map<String, dynamic>> getRemoteUserInfo(String AID) async {
     DocumentSnapshot snapshot =
@@ -66,7 +128,7 @@ class UserDataRemoteRepo {
         }
 
         return UserDto(
-          name: data['name'] ?? userID,
+          name: data['nickname'] ?? userID,
           imageUrl: avatarUrl,
           ePub: BigInt.parse(data['publicKey']['e']),
           nPub: BigInt.parse(data['publicKey']['n']),

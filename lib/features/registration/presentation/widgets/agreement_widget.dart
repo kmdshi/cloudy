@@ -40,7 +40,7 @@ class _AgreementWidgetState extends State<AgreementWidget> {
                 child: SizedBox(height: 20),
               ),
               TextSpan(
-                  text: ' of Cipherme',
+                  text: ' of Cloudy',
                   style: Theme.of(context).textTheme.headlineSmall),
             ],
           ),

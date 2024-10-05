@@ -4,13 +4,12 @@ import 'package:cloudy/core/gen/assets.gen.dart';
 import 'package:cloudy/core/services/cipher_service.dart';
 import 'package:cloudy/core/theme/color_theme.dart';
 import 'package:cloudy/features/messaging/domain/entities/initial_data_value.dart';
-import 'package:cloudy/features/user_data/presentation/bloc/messaging_bloc.dart';
+import 'package:cloudy/features/user_data/presentation/bloc/user_data_bloc.dart';
 import 'package:cloudy/features/user_data/presentation/widgets/user_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pointycastle/pointycastle.dart' as castle;
 import 'package:qr_flutter/qr_flutter.dart';
 
 class MessagesScreen extends StatefulWidget {
@@ -106,6 +105,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     return UserWidget(
                       avatarUrl: currentUser.urlAvatar,
                       userName: currentUser.username,
+                      initiatorID: user.AID,
+                      secondID: currentUser.AID,
                       onTap: () =>
                           context.push('/messages/communication', extra: data),
                     );

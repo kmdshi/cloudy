@@ -28,6 +28,7 @@ dependencies:
   collection: ^1.18.0
   crypto: ^3.0.5
   cupertino_icons: ^1.0.8
+  encrypt: ^5.0.3
   equatable: ^2.0.5
   firebase_core: ^3.4.0
   firebase_storage: ^12.2.0
@@ -40,17 +41,17 @@ dependencies:
   google_fonts: ^6.2.1
   image_picker: ^1.1.2
   injectable: ^2.4.4
+  intl: ^0.19.0
   mobkit_dashed_border: ^0.0.6
   pointycastle: ^3.9.1
   qr_flutter: ^4.1.0
   shared_preferences: ^2.3.2
   tab_indicator_styler: ^2.0.0
-  encrypt: ^5.0.3
 
 dev_dependencies:
   build_runner: ^2.4.12
-  flutter_lints: ^4.0.0
   flutter_gen: ^5.7.0
+  flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
   injectable_generator: ^2.6.1

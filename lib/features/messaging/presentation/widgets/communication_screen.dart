@@ -1,9 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:cloudy/core/gen/assets.gen.dart';
+import 'package:cloudy/core/theme/color_theme.dart';
 import 'package:cloudy/features/messaging/domain/entities/initial_data_value.dart';
 import 'package:cloudy/features/messaging/domain/entities/message_entity.dart';
 import 'package:cloudy/features/messaging/presentation/bloc/messaging_bloc.dart';
+import 'package:cloudy/features/messaging/presentation/widgets/custom_input_field.dart';
+import 'package:cloudy/features/messaging/presentation/widgets/message_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -22,21 +25,26 @@ class CommunicationScreen extends StatefulWidget {
 class _CommunicationScreenState extends State<CommunicationScreen> {
   late final TextEditingController messageController;
   late final MessagingBloc messagingBloc;
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
     messageController = TextEditingController();
+    _scrollController = ScrollController();
+
     messagingBloc = context.read<MessagingBloc>();
 
     messagingBloc.add(DialogInitializationEvent(
       initialDataValue: widget.initialDataValueEntity,
     ));
+
     super.initState();
   }
 
   @override
   void dispose() {
     messageController.dispose();
+    _scrollController.dispose();
     messagingBloc.closeSubcription();
     super.dispose();
   }
@@ -45,6 +53,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: TColorTheme.transparent,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => context.pop(),
@@ -96,47 +105,56 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                 } else {
                   final messages = snapshot.data!;
 
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: messages.length,
-                          itemBuilder: (context, index) {
-                            final message = messages[index];
-                            return ListTile(
-                              title: Text(message.message),
-                              subtitle: Text(message.senderID),
-                              trailing: Text(
-                                message.timestamp.toLocal().toString(),
-                              ),
-                            );
-                          },
+                  _scrollToBottom();
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            controller: _scrollController,
+                            child: Column(
+                              children: [
+                                ListView.separated(
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: messages.length,
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(height: 10),
+                                  itemBuilder: (context, index) {
+                                    final message = messages[index];
+                                    return MessageWidget(
+                                      message: message.message,
+                                      date: message.timestamp,
+                                      isFromInitiator: message.isFromInitiator,
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: 10),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: messageController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Enter message',
-                                  border: OutlineInputBorder(),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: CustomInputField(
+                                  controller: messageController,
+                                  onSubmitted: (_) {
+                                    sendMessage(dialogKey);
+                                    messageController.clear();
+                                  },
                                 ),
                               ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.send),
-                              onPressed: () {
-                                sendMessage(dialogKey);
-                                messageController.clear();
-                              },
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 }
               },
@@ -161,5 +179,17 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
             secondID: widget.initialDataValueEntity.secondAID,
           ));
     }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 }

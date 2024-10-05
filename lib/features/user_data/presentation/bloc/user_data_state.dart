@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-part of 'messaging_bloc.dart';
+part of 'user_data_bloc.dart';
 
 sealed class UserDataState extends Equatable {
   const UserDataState();

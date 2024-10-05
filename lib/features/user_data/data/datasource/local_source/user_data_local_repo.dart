@@ -10,7 +10,7 @@ class UserDataLocalRepo {
     final sharedPrefs = getIt<SharedPreferences>();
     final secureStorage = getIt<FlutterSecureStorage>();
 
-    final userAID = await _getUserAID(sharedPrefs);
+    final userAID = _getUserAID(sharedPrefs);
     final keysDetail = await _getSecureKeys(secureStorage);
 
     return {
@@ -19,7 +19,7 @@ class UserDataLocalRepo {
     };
   }
 
-  Future<String> _getUserAID(SharedPreferences sharedPrefs) async {
+  String _getUserAID(SharedPreferences sharedPrefs) {
     final sessionInfoString = sharedPrefs.getString('session_information');
     final sessionInfo = jsonDecode(sessionInfoString!);
 

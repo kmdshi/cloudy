@@ -1,7 +1,7 @@
 import 'package:cloudy/core/gen/assets.gen.dart';
 import 'package:cloudy/features/user_data/presentation/widgets/custom_icon_button_widget.dart';
 import 'package:cloudy/features/user_data/presentation/widgets/custom_tabbar_widget.dart';
-import 'package:cloudy/features/user_data/presentation/widgets/messages_screen.dart';
+import 'package:cloudy/features/user_data/presentation/widgets/user_data_screen.dart';
 import 'package:flutter/material.dart';
 
 class GeneralScreen extends StatefulWidget {
@@ -36,7 +36,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
         appBar: AppBar(
           titleSpacing: 20.0,
           title: const Text(
-            'Cipherme',
+            'Cloudy',
           ),
           bottom: const PreferredSize(
             preferredSize: Size.fromHeight(75),
@@ -70,7 +70,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                 // ),
                 MessagesScreen(),
                 Center(
-                  child: Text('2'),
+                  child: Text('Not ready yet...'),
                 ),
               ],
             ),

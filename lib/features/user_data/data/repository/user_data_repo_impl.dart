@@ -3,6 +3,7 @@ import 'package:cloudy/core/services/cipher_service.dart';
 import 'package:cloudy/features/user_data/data/DTO/users_dto.dart';
 import 'package:cloudy/features/user_data/data/datasource/local_source/user_data_local_repo.dart';
 import 'package:cloudy/features/user_data/data/datasource/remote_source/user_data_remote_repo.dart';
+import 'package:cloudy/features/user_data/domain/entities/last_message_entity.dart';
 import 'package:cloudy/features/user_data/domain/entities/self_entity.dart';
 import 'package:cloudy/features/user_data/domain/entities/user_entity.dart';
 import 'package:cloudy/features/user_data/domain/repository/user_data_repository.dart';
@@ -65,5 +66,29 @@ class UserDataRepoImpl implements UserDataRepository {
     );
 
     return selfEntity;
+  }
+
+  @override
+  Future<Stream<LastMessageEntity?>> getLastMessageStream(
+      String initiatorAID, String secondAID) async {
+    final localData = await messagingLocalRepo.getLocalUserData();
+    
+    final selfPublicKey = cipherService.regeneratePublicKey({
+      'n': localData['keys']['nPub'],
+      'e': localData['keys']['nPub'],
+    });
+    final selfPrivateKey = cipherService.regeneratePrivateKey({
+      'n': localData['keys']['nPriv'],
+      'd': localData['keys']['dPriv'],
+      'p': localData['keys']['pPriv'],
+      'q': localData['keys']['qPriv'],
+    });
+    final AsymmetricKeyPair<PublicKey, PrivateKey> keys =
+        AsymmetricKeyPair(selfPublicKey, selfPrivateKey);
+    return messagingRemoteRepo.getLastMessageStream(
+      initiatorAID,
+      secondAID,
+      keys,
+    );
   }
 }
