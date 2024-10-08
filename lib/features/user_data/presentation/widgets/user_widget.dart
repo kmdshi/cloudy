@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserWidget extends StatefulWidget {
+  final String? localName;
   final String userName;
   final String avatarUrl;
   final String initiatorID;
@@ -19,6 +20,7 @@ class UserWidget extends StatefulWidget {
     required this.onTap,
     required this.initiatorID,
     required this.secondID,
+    this.localName,
   });
 
   @override
@@ -33,7 +35,6 @@ class _UserWidgetState extends State<UserWidget> {
   void initState() {
     super.initState();
     _lastMessageController = StreamController<LastMessageEntity?>();
-
     _lastMessageFuture = _subscribeToLastMessageStream();
   }
 
@@ -81,18 +82,17 @@ class _UserWidgetState extends State<UserWidget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.userName.length > 10
-                                    ? widget.userName
-                                    : widget.userName,
+                                _formateNickname(widget.localName ?? 'null',
+                                    widget.userName, widget.secondID),
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 5),
                               Text(
                                 lastMessage != null
                                     ? (lastMessage.isFromInitiator == true
-                                        ? 'Вы: ${lastMessage.message}'
+                                        ? 'You: ${lastMessage.message}'
                                         : lastMessage.message)
-                                    : 'Нет сообщений',
+                                    : 'No messages',
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ],
@@ -123,9 +123,8 @@ class _UserWidgetState extends State<UserWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.userName.length > 10
-                                  ? widget.userName.substring(0, 5)
-                                  : widget.userName,
+                              _formateNickname(widget.localName ?? 'null',
+                                  widget.userName, widget.secondID),
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 5),
@@ -143,6 +142,16 @@ class _UserWidgetState extends State<UserWidget> {
     );
   }
 
+  String _formateNickname(String localName, String userName, String AID) {
+    if (localName != 'null') {
+      return localName;
+    } else if (userName != AID) {
+      return userName;
+    } else {
+      return '${userName.substring(0, 5)}...${widget.userName.substring(widget.userName.length - 3, widget.userName.length)}';
+    }
+  }
+
   Future<void> _subscribeToLastMessageStream() async {
     try {
       final stream = await context
@@ -155,10 +164,14 @@ class _UserWidgetState extends State<UserWidget> {
 
       stream.listen(
         (message) {
-          _lastMessageController.add(message);
+          if (!_lastMessageController.isClosed) {
+            _lastMessageController.add(message);
+          }
         },
         onError: (error) {
-          _lastMessageController.addError(error);
+          if (!_lastMessageController.isClosed) {
+            _lastMessageController.addError(error);
+          }
         },
       );
     } catch (e) {

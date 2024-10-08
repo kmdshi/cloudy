@@ -12,6 +12,9 @@ import 'package:flutter/widgets.dart';
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/add_icon.png
+  AssetGenImage get addIcon => const AssetGenImage('assets/icons/add_icon.png');
+
   /// File path: assets/icons/arrow_icon.png
   AssetGenImage get arrowIcon =>
       const AssetGenImage('assets/icons/arrow_icon.png');
@@ -19,6 +22,21 @@ class $AssetsIconsGen {
   /// File path: assets/icons/done_icon.png
   AssetGenImage get doneIcon =>
       const AssetGenImage('assets/icons/done_icon.png');
+
+  /// File path: assets/icons/encryption_icon.png
+  AssetGenImage get encryptionIcon =>
+      const AssetGenImage('assets/icons/encryption_icon.png');
+
+  /// File path: assets/icons/info_icon.png
+  AssetGenImage get infoIcon =>
+      const AssetGenImage('assets/icons/info_icon.png');
+
+  /// File path: assets/icons/log-out.png
+  AssetGenImage get logOut => const AssetGenImage('assets/icons/log-out.png');
+
+  /// File path: assets/icons/more_icon.png
+  AssetGenImage get moreIcon =>
+      const AssetGenImage('assets/icons/more_icon.png');
 
   /// File path: assets/icons/paper_icon.png
   AssetGenImage get paperIcon =>
@@ -36,9 +54,30 @@ class $AssetsIconsGen {
   AssetGenImage get settingIcon =>
       const AssetGenImage('assets/icons/setting_icon.png');
 
+  /// File path: assets/icons/status_icon.png
+  AssetGenImage get statusIcon =>
+      const AssetGenImage('assets/icons/status_icon.png');
+
+  /// File path: assets/icons/theme_icon.png
+  AssetGenImage get themeIcon =>
+      const AssetGenImage('assets/icons/theme_icon.png');
+
   /// List of all assets
-  List<AssetGenImage> get values =>
-      [arrowIcon, doneIcon, paperIcon, scanIcon, searchIcon, settingIcon];
+  List<AssetGenImage> get values => [
+        addIcon,
+        arrowIcon,
+        doneIcon,
+        encryptionIcon,
+        infoIcon,
+        logOut,
+        moreIcon,
+        paperIcon,
+        scanIcon,
+        searchIcon,
+        settingIcon,
+        statusIcon,
+        themeIcon
+      ];
 }
 
 class $AssetsImagesGen {

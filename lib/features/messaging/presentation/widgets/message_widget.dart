@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloudy/core/theme/color_theme.dart';
+import 'package:intl/intl.dart';
 
 class MessageWidget extends StatelessWidget {
   final String message;
@@ -16,8 +17,7 @@ class MessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    String time =
-        "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+    String time = DateFormat('hh:mm a').format(date);
 
     return Column(
       crossAxisAlignment:
@@ -33,7 +33,9 @@ class MessageWidget extends StatelessWidget {
                 maxWidth: width / 2,
               ),
               decoration: BoxDecoration(
-                  color: TColorTheme.darkLabel,
+                  color: isFromInitiator
+                      ? TColorTheme.darkLabel
+                      : TColorTheme.white,
                   borderRadius: isFromInitiator
                       ? const BorderRadius.only(
                           topRight: Radius.zero,
@@ -49,13 +51,16 @@ class MessageWidget extends StatelessWidget {
                         )),
               padding: const EdgeInsets.all(8.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     message,
-                    style: const TextStyle(
-                      color: Colors.white,
-                    ),
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                          color: isFromInitiator
+                              ? Colors.white
+                              : TColorTheme.textGrey,
+                        ),
                   ),
                 ],
               ),
@@ -63,13 +68,11 @@ class MessageWidget extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 4),
-        Text(
-          time,
-          style: const TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
-          ),
-        ),
+        Text(time,
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium!
+                .copyWith(fontSize: 12)),
       ],
     );
   }

@@ -9,8 +9,11 @@ import 'package:cloudy/features/registration/presentation/widgets/registration_s
 import 'package:cloudy/features/registration/presentation/widgets/restore_screen.dart';
 import 'package:cloudy/features/registration/presentation/widgets/verefication_screen.dart';
 import 'package:cloudy/features/registration/presentation/widgets/verify_sucess_screen.dart';
+import 'package:cloudy/features/settings/presentation/widgets/about_screen.dart';
+import 'package:cloudy/features/settings/presentation/widgets/cipher_screen.dart';
+import 'package:cloudy/features/settings/presentation/widgets/settings_screen.dart';
 import 'package:cloudy/features/user_data/presentation/widgets/general_screen.dart';
-import 'package:cloudy/features/user_data/presentation/widgets/import_adress_screen.dart';
+import 'package:cloudy/core/presentation/import_adress_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -67,15 +70,40 @@ class TCryptomeRouter {
         builder: (context, state) => const GeneralScreen(),
         routes: [
           GoRoute(
-            path: 'import',
-            builder: (context, state) => const ImportAddressScreen(),
+              path: 'import/:AID',
+              builder: (context, state) {
+                final String AID = state.pathParameters['AID']!;
+                return ImportAddressScreen(isFromSettings: false, AID: AID);
+              }),
+          GoRoute(
+            path: 'communication',
+            builder: (context, state) {
+              final data = state.extra as InitialDataValueEntity;
+              return CommunicationScreen(initialDataValueEntity: data);
+            },
           ),
           GoRoute(
-              path: 'communication',
-              builder: (context, state) {
-                final data = state.extra as InitialDataValueEntity;
-                return CommunicationScreen(initialDataValueEntity: data);
-              }),
+            path: 'settings',
+            builder: (context, state) {
+              return const SettingsScreen();
+            },
+            routes: [
+              GoRoute(
+                  path: 'import/:AID',
+                  builder: (context, state) {
+                    final String AID = state.pathParameters['AID']!;
+                    return ImportAddressScreen(isFromSettings: true, AID: AID);
+                  }),
+              GoRoute(
+                path: 'cipher',
+                builder: (context, state) => const CipherScreen(),
+              ),
+              GoRoute(
+                path: 'about',
+                builder: (context, state) => const AboutScreen(),
+              ),
+            ],
+          )
         ],
       )
     ],

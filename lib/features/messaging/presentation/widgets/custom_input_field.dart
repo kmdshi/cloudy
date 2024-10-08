@@ -19,9 +19,14 @@ class _CustomInputFieldState extends State<CustomInputField> {
   Widget build(BuildContext context) {
     return TextField(
       controller: widget.controller,
+      cursorColor: TColorTheme.mainBlue,
       decoration: InputDecoration(
         filled: true,
         fillColor: TColorTheme.white,
+        hintStyle: Theme.of(context).textTheme.headlineMedium!.copyWith(
+              color: TColorTheme.secondryGrey.withOpacity(.5),
+              fontSize: 16,
+            ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(48),
           borderSide: BorderSide.none,

@@ -4,6 +4,7 @@ import 'package:cloudy/core/services/deeplink_handler.dart';
 import 'package:cloudy/core/theme/app_theme.dart';
 import 'package:cloudy/features/messaging/presentation/bloc/messaging_bloc.dart';
 import 'package:cloudy/features/registration/presentation/bloc/registration_bloc.dart';
+import 'package:cloudy/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:cloudy/features/user_data/presentation/bloc/user_data_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,6 +44,9 @@ class _CryptomeAppState extends State<CryptomeApp> {
         ),
         BlocProvider(
           create: (_) => getIt<MessagingBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<SettingsBloc>(),
         )
       ],
       child: MaterialApp.router(

@@ -21,3 +21,33 @@ class GetLastMessageStreamEvent extends UserDataEvent {
   @override
   List<Object> get props => [initiatorID, secondAID];
 }
+
+class AddContactEvent extends UserDataEvent {
+  final String AID;
+  final String contactAID;
+  final String? localName;
+  const AddContactEvent(
+      {required this.AID, required this.contactAID, this.localName});
+
+  @override
+  List<Object> get props => [];
+}
+
+class ContactsUpdatedEvent extends UserDataEvent {
+  final List<UserEntity>? updatedContacts;
+
+  const ContactsUpdatedEvent(
+    this.updatedContacts,
+  );
+}
+
+class ChangeUrlStatusEvent extends UserDataEvent {
+  final String AID;
+  final bool newStatus;
+  const ChangeUrlStatusEvent({
+    required this.AID,
+    required this.newStatus,
+  });
+  @override
+  List<Object> get props => [AID, newStatus];
+}

@@ -1,8 +1,10 @@
 import 'package:cloudy/core/gen/assets.gen.dart';
+import 'package:cloudy/core/presentation/keep_alive_widget.dart';
 import 'package:cloudy/features/user_data/presentation/widgets/custom_icon_button_widget.dart';
 import 'package:cloudy/features/user_data/presentation/widgets/custom_tabbar_widget.dart';
 import 'package:cloudy/features/user_data/presentation/widgets/user_data_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class GeneralScreen extends StatefulWidget {
   const GeneralScreen({super.key});
@@ -52,7 +54,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
               padding: const EdgeInsets.only(right: 20),
               child: CustomIconButtonWidget(
                 iconPath: Assets.icons.settingIcon.path,
-                onTap: () {},
+                onTap: () => context.push('/messages/settings'),
                 // onTap: () => Navigator.push(context,
                 //     MaterialPageRoute(builder: (context) => TempScreen())),
               ),
@@ -68,7 +70,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                 // Center(
                 //   child: Text('1'),
                 // ),
-                MessagesScreen(),
+                KeepAliveWrapper(child: MessagesScreen()),
                 Center(
                   child: Text('Not ready yet...'),
                 ),

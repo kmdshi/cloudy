@@ -29,7 +29,7 @@ class UserDataRemoteRepo {
     String secondAID,
     AsymmetricKeyPair<PublicKey, PrivateKey> keys,
   ) {
-    final dateService = DateManipualtions();
+    final dateService = DateManipulations();
     final sortedAIDs = [initiatorAID.substring(0, 4), secondAID.substring(0, 4)]
       ..sort();
     final mutualAID = '${sortedAIDs[0]}_${sortedAIDs[1]}';
@@ -86,12 +86,12 @@ class UserDataRemoteRepo {
 
       if (data != null) {
         final bool urlStatus = data['urlStatus'];
-        final List<dynamic> contactsAIDs = data['contacts'];
-        final contacts = await getUsersFromRemoteDB(contactsAIDs);
+        // final Map<String, dynamic> contactsData = data['contacts'];
+        // final contacts = await getUsersFromRemoteDB(contactsData);
 
         return {
           'urlStatus': urlStatus,
-          'contacts': contacts,
+          // 'contacts': contacts,
         };
       }
       return throw Exception('Data does not exist');
@@ -100,40 +100,85 @@ class UserDataRemoteRepo {
     }
   }
 
-  Future<List<UserDto>> getUsersFromRemoteDB(List<dynamic> userIds) async {
-    final List<Future<UserDto?>> futures = userIds.map((userID) async {
+  Future<void> changeDataUrlStatus(String AID, bool newStatus) async {
+    try {
+      DocumentSnapshot snapshot =
+          await fireStoreDB.collection('accounts').doc(AID).get();
+
+      if (snapshot.exists) {
+        Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+
+        if (data == null) {
+          throw Exception('Не удалось получить данные диалога');
+        }
+
+        await fireStoreDB.collection('accounts').doc(AID).update({
+          'urlStatus': newStatus,
+        });
+
+        log('url-status changed successfully.');
+      } else {
+        throw Exception('Document does not exist');
+      }
+    } catch (e) {
+      log('Error adding new companion: $e');
+      rethrow;
+    }
+  }
+
+  Stream<List<UserDto>> getContactsStream(String AID) {
+    return fireStoreDB
+        .collection('accounts')
+        .doc(AID)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      Map<String, dynamic>? data = snapshot.data();
+      if (data != null && data.containsKey('contacts')) {
+        Map<String, dynamic> contactsData = data['contacts'];
+
+        if (contactsData.isEmpty) {
+          return [];
+        }
+
+        return await getUsersFromRemoteDB(contactsData);
+      } else {
+        return [];
+      }
+    });
+  }
+
+  Future<List<UserDto>> getUsersFromRemoteDB(
+      Map<String, dynamic> userMap) async {
+    final List<Future<UserDto?>> futures = userMap.entries.map((entry) async {
+      final String userID = entry.key;
+      final String? localName = entry.value;
+
       try {
-        DocumentSnapshot snapshot = await fireStoreDB
-            .collection('accounts')
-            .doc(userID as String)
-            .get();
+        DocumentSnapshot snapshot =
+            await fireStoreDB.collection('accounts').doc(userID).get();
         Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
 
         if (data == null) return null;
 
-        String avatarUrl =
-            'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg';
+        String avatarUrl = await _getAvatarUrl(userID);
 
-        try {
-          final storageRef =
-              FirebaseStorage.instance.ref().child('avatars/$userID.png');
+        if (data.containsKey('publicKey')) {
+          final Map<String, dynamic> publicKey = data['publicKey'];
+          final ePub = BigInt.tryParse(publicKey['e'])!;
+          final nPub = BigInt.tryParse(publicKey['n'])!;
 
-          await storageRef.getMetadata();
-
-          avatarUrl = await storageRef.getDownloadURL();
-        } catch (e) {
-          (e as FirebaseException).code == 'object-not-found'
-              ? log('no user image found')
-              : log('Error fetching image: $e');
+          return UserDto(
+            localName: localName,
+            name: data['nickname'] ?? userID,
+            imageUrl: avatarUrl,
+            ePub: ePub,
+            nPub: nPub,
+            AID: userID,
+          );
+        } else {
+          log('Public key missing for user $userID');
+          return null;
         }
-
-        return UserDto(
-          name: data['nickname'] ?? userID,
-          imageUrl: avatarUrl,
-          ePub: BigInt.parse(data['publicKey']['e']),
-          nPub: BigInt.parse(data['publicKey']['n']),
-          AID: userID,
-        );
       } catch (e) {
         log('Error fetching user: $e');
         return null;
@@ -145,21 +190,73 @@ class UserDataRemoteRepo {
     return fetchedUsers.whereType<UserDto>().toList();
   }
 
-  Future<void> addNewCompanion(String AID, String newContact) async {
+  Future<String> _getAvatarUrl(String userID) async {
+    String defaultAvatarUrl =
+        'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg';
+
     try {
-      DocumentSnapshot snapshot =
+      final storageRef =
+          FirebaseStorage.instance.ref().child('avatars/$userID.png');
+      await storageRef.getMetadata();
+      return await storageRef.getDownloadURL();
+    } catch (e) {
+      if ((e as FirebaseException).code == 'object-not-found') {
+        log('No user image found for $userID');
+        return defaultAvatarUrl;
+      } else {
+        log('Error fetching image: $e');
+        return defaultAvatarUrl;
+      }
+    }
+  }
+
+  Future<String?> addNewCompanion(
+      String AID, String newContact, String? localName) async {
+    try {
+      DocumentSnapshot userSnapshot =
           await fireStoreDB.collection('accounts').doc(AID).get();
 
-      if (snapshot.exists) {
+      DocumentSnapshot addedUserSnapshot =
+          await fireStoreDB.collection('accounts').doc(newContact).get();
+
+      if (userSnapshot.exists && addedUserSnapshot.exists) {
+        Map<String, dynamic>? userData =
+            userSnapshot.data() as Map<String, dynamic>?;
+        Map<String, dynamic>? addedUserData =
+            addedUserSnapshot.data() as Map<String, dynamic>?;
+
+        if (userData == null || addedUserData == null) {
+          throw Exception('Не удалось получить данные диалога');
+        }
+
+        if (addedUserData['urlStatus'] == false) {
+          return 'Unable to add. User has disabled the public link.';
+        }
+
+        Map<String, dynamic>? userContacts =
+            userData['contacts'] as Map<String, dynamic>? ?? {};
+        Map<String, dynamic>? addedUserContacts =
+            addedUserData['contacts'] as Map<String, dynamic>? ?? {};
+
+        userContacts[newContact] = localName;
+        addedUserContacts[AID] = null;
+
         await fireStoreDB.collection('accounts').doc(AID).update({
-          'contacts': FieldValue.arrayUnion([newContact]),
+          'contacts': userContacts,
         });
+
+        await fireStoreDB.collection('accounts').doc(newContact).update({
+          'contacts': addedUserContacts,
+        });
+
         log('Contact added successfully.');
+        return null;
       } else {
         throw Exception('Document does not exist');
       }
     } catch (e) {
       log('Error adding new companion: $e');
+      rethrow;
     }
   }
 }

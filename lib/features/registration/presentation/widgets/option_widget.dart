@@ -83,7 +83,8 @@ class OptionWidget extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         isTitle
-            ? Text('e.g  Azuki, Azuki #99, ... (some symbols are allowed)',
+            ? Text(
+                'be careful, it will be IMPOSSIBLE to change your nickname afterwards.',
                 style: Theme.of(context).textTheme.headlineSmall)
             : const SizedBox.shrink(),
         isInterests

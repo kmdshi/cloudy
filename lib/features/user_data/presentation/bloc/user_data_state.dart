@@ -14,8 +14,12 @@ class UserDataLoading extends UserDataState {}
 
 class UserDataLoaded extends UserDataState {
   final SelfEntity userData;
+  final Stream<List<UserEntity>?> contactsStream;
+  final String? expectedErrorMessage;
   const UserDataLoaded({
     required this.userData,
+    required this.contactsStream,
+    this.expectedErrorMessage,
   });
 
   @override

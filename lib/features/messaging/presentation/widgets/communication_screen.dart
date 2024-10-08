@@ -7,9 +7,11 @@ import 'package:cloudy/features/messaging/domain/entities/message_entity.dart';
 import 'package:cloudy/features/messaging/presentation/bloc/messaging_bloc.dart';
 import 'package:cloudy/features/messaging/presentation/widgets/custom_input_field.dart';
 import 'package:cloudy/features/messaging/presentation/widgets/message_widget.dart';
+import 'package:cloudy/features/messaging/presentation/widgets/time_separator_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class CommunicationScreen extends StatefulWidget {
   final InitialDataValueEntity initialDataValueEntity;
@@ -54,16 +56,39 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: TColorTheme.transparent,
-        centerTitle: true,
+        centerTitle: false,
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: Assets.icons.arrowIcon.image(),
         ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundImage:
+                  NetworkImage(widget.initialDataValueEntity.avatarUrl),
+            ),
+            const SizedBox(width: 8),
+            // сделать форматирование строки на обьект AID и никнейма
+            Text(
+              widget.initialDataValueEntity.username.substring(0, 5),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Assets.icons.moreIcon.image(),
+          )
+        ],
       ),
       body: BlocBuilder<MessagingBloc, MessagingState>(
         builder: (context, state) {
           if (state is MessagingLoaded) {
             final dialogKey = state.dialogKey;
+            String? previousDate;
 
             return StreamBuilder<List<MessageEntity>>(
               stream: state.chatHistory,
@@ -114,22 +139,51 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                         Expanded(
                           child: SingleChildScrollView(
                             controller: _scrollController,
+                            physics: const ClampingScrollPhysics(),
+                            padding: EdgeInsets.only(
+                                top: 50,
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom),
                             child: Column(
                               children: [
-                                ListView.separated(
+                                ListView.builder(
                                   scrollDirection: Axis.vertical,
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: messages.length,
-                                  separatorBuilder: (context, index) =>
-                                      const SizedBox(height: 10),
                                   itemBuilder: (context, index) {
                                     final message = messages[index];
-                                    return MessageWidget(
-                                      message: message.message,
-                                      date: message.timestamp,
-                                      isFromInitiator: message.isFromInitiator,
-                                    );
+
+                                    final messageDate = DateFormat('yyyy-MM-dd')
+                                        .format(message.timestamp);
+
+                                    if (index == 0 ||
+                                        previousDate != messageDate) {
+                                      previousDate = messageDate;
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 10),
+                                          TimeSeparatorWidget(
+                                              date: message.timestamp),
+                                          const SizedBox(height: 10),
+                                          MessageWidget(
+                                            message: message.message,
+                                            date: message.timestamp,
+                                            isFromInitiator:
+                                                message.isFromInitiator,
+                                          ),
+                                        ],
+                                      );
+                                    } else {
+                                      return MessageWidget(
+                                        message: message.message,
+                                        date: message.timestamp,
+                                        isFromInitiator:
+                                            message.isFromInitiator,
+                                      );
+                                    }
                                   },
                                 ),
                                 const SizedBox(height: 10),

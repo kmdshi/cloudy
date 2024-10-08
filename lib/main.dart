@@ -13,3 +13,9 @@ void main() async {
   await configureInjection();
   runApp(const CryptomeApp());
 }
+
+
+/*
+Copyright (C) 2024 Kamidashi
+This software is licensed under the GNU General Public License v2.
+*/

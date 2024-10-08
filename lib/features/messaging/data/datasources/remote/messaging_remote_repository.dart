@@ -126,7 +126,7 @@ class MessagingRemoteRepository {
       if (snapshot.exists) {
         Map<String, dynamic>? data = snapshot.data();
         final messagesMap = data?['messages'] ?? {};
-
+      
         return (messagesMap as Map<String, dynamic>).entries.map((entry) {
           final messageDto =
               MessageDto.fromMap(entry.value as Map<String, dynamic>).copyWith(

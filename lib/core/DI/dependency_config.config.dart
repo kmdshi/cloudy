@@ -33,6 +33,16 @@ import 'package:cloudy/features/registration/domain/repository/registration_repo
     as _i667;
 import 'package:cloudy/features/registration/presentation/bloc/registration_bloc.dart'
     as _i812;
+import 'package:cloudy/features/settings/data/datasource/local/settings_local_repository.dart'
+    as _i115;
+import 'package:cloudy/features/settings/data/datasource/remote/settings_remote_repository.dart'
+    as _i187;
+import 'package:cloudy/features/settings/data/repository/settings_repository_impl.dart'
+    as _i611;
+import 'package:cloudy/features/settings/domain/repository/settings_repository.dart'
+    as _i933;
+import 'package:cloudy/features/settings/presentation/bloc/settings_bloc.dart'
+    as _i282;
 import 'package:cloudy/features/user_data/data/datasource/local_source/user_data_local_repo.dart'
     as _i925;
 import 'package:cloudy/features/user_data/data/datasource/remote_source/user_data_remote_repo.dart'
@@ -84,14 +94,30 @@ extension GetItInjectableX on _i174.GetIt {
           firestorage: gh<_i457.FirebaseStorage>(),
           cipherService: gh<_i128.CipherService>(),
         ));
+    gh.lazySingleton<_i115.SettingsLocalRepository>(
+        () => _i115.SettingsLocalRepository(
+              sharedPreferences: gh<_i460.SharedPreferences>(),
+              secureStorage: gh<_i558.FlutterSecureStorage>(),
+            ));
     gh.lazySingleton<_i158.UserDataRepository>(() => _i20.UserDataRepoImpl(
           messagingLocalRepo: gh<_i925.UserDataLocalRepo>(),
           cipherService: gh<_i128.CipherService>(),
           messagingRemoteRepo: gh<_i630.UserDataRemoteRepo>(),
         ));
+    gh.lazySingleton<_i187.SettingsRemoteRepository>(
+        () => _i187.SettingsRemoteRepository(
+              fireStoreDB: gh<_i974.FirebaseFirestore>(),
+              firestorage: gh<_i457.FirebaseStorage>(),
+            ));
     gh.lazySingleton<_i250.RegistrationLocalSource>(() =>
         _i250.RegistrationLocalSource(
             cipherService: gh<_i128.CipherService>()));
+    gh.lazySingleton<_i933.SettingsRepository>(
+        () => _i611.SettingsRepositoryImpl(
+              settingsRemoteRepository: gh<_i187.SettingsRemoteRepository>(),
+              settingsLocalRepository: gh<_i115.SettingsLocalRepository>(),
+              cipherService: gh<_i128.CipherService>(),
+            ));
     gh.lazySingleton<_i592.RegistrationRemoteSource>(
         () => _i592.RegistrationRemoteSource(
               fireStoreDB: gh<_i974.FirebaseFirestore>(),
@@ -105,6 +131,8 @@ extension GetItInjectableX on _i174.GetIt {
             ));
     gh.factory<_i491.UserDataBloc>(() => _i491.UserDataBloc(
         messagingRepository: gh<_i158.UserDataRepository>()));
+    gh.factory<_i282.SettingsBloc>(() =>
+        _i282.SettingsBloc(settingsRepository: gh<_i933.SettingsRepository>()));
     gh.lazySingleton<_i148.MessagingRepository>(
         () => _i4.MessagingRepositoryImpl(
               messagingRemoteRepository: gh<_i184.MessagingRemoteRepository>(),

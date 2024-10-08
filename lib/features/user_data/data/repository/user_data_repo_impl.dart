@@ -22,8 +22,10 @@ class UserDataRepoImpl implements UserDataRepository {
   });
 
   @override
-  Future<void> addNewCompanion(String AID) {
-    throw UnimplementedError();
+  Future<String?> addNewCompanion(
+      String AID, String newContact, String? localName) async {
+    return await messagingRemoteRepo.addNewCompanion(
+        AID, newContact, localName);
   }
 
   @override
@@ -31,18 +33,6 @@ class UserDataRepoImpl implements UserDataRepository {
     final localData = await messagingLocalRepo.getLocalUserData();
     final userAID = localData['AID'];
     final remoteData = await messagingRemoteRepo.getRemoteUserInfo(userAID);
-
-    final usersDTO = remoteData['contacts'];
-    final List<UserEntity> users = (usersDTO as List<dynamic>).map((dto) {
-      final userDto = dto as UserDto;
-      return UserEntity(
-        AID: dto.AID,
-        urlAvatar: dto.imageUrl,
-        username: userDto.name,
-        nPub: dto.nPub,
-        ePub: dto.ePub,
-      );
-    }).toList();
 
     final selfPublicKey = cipherService.regeneratePublicKey({
       'n': localData['keys']['nPub'],
@@ -62,7 +52,7 @@ class UserDataRepoImpl implements UserDataRepository {
       keys: keys,
       AID: userAID,
       urlStatus: remoteData['urlStatus'],
-      contacts: users,
+      // contacts: users,
     );
 
     return selfEntity;
@@ -72,7 +62,7 @@ class UserDataRepoImpl implements UserDataRepository {
   Future<Stream<LastMessageEntity?>> getLastMessageStream(
       String initiatorAID, String secondAID) async {
     final localData = await messagingLocalRepo.getLocalUserData();
-    
+
     final selfPublicKey = cipherService.regeneratePublicKey({
       'n': localData['keys']['nPub'],
       'e': localData['keys']['nPub'],
@@ -90,5 +80,28 @@ class UserDataRepoImpl implements UserDataRepository {
       secondAID,
       keys,
     );
+  }
+
+  @override
+  Future<Stream<List<UserEntity>?>> getContactsStream(String AID) async {
+    return messagingRemoteRepo.getContactsStream(AID).map((userDtos) {
+      return userDtos.map((userDto) => mapDtoToEntity(userDto)).toList();
+    });
+  }
+
+  UserEntity mapDtoToEntity(UserDto dto) {
+    return UserEntity(
+      username: dto.name,
+      localName: dto.localName,
+      urlAvatar: dto.imageUrl,
+      ePub: dto.ePub,
+      nPub: dto.nPub,
+      AID: dto.AID,
+    );
+  }
+  
+  @override
+  Future<void> changeDataUrlStatus(String AID, bool newStatus) async {
+  await messagingRemoteRepo.changeDataUrlStatus(AID, newStatus);
   }
 }

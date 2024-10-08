@@ -4,6 +4,8 @@ import 'package:pointycastle/api.dart';
 class InitialDataValueEntity {
   final String initiatorAID;
   final String secondAID;
+  final String username;
+  final String avatarUrl;
   final PublicKey firstPublicKey;
   final PrivateKey firstPrivateKey;
   final PublicKey secondPublicKey;
@@ -12,6 +14,8 @@ class InitialDataValueEntity {
     required this.secondAID,
     required this.firstPublicKey,
     required this.firstPrivateKey,
+    required this.avatarUrl,
+    required this.username,
     required this.secondPublicKey,
   });
 }

@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 
 class InputWidget extends StatelessWidget {
   final String title;
+  final TextEditingController controller;
   final String subtitle;
   final bool isAddress;
   const InputWidget({
     super.key,
     required this.title,
     required this.subtitle,
+    required this.controller,
     this.isAddress = false,
   });
 
@@ -38,6 +40,7 @@ class InputWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
           ),
           child: TextField(
+            controller: controller,
             cursorColor: TColorTheme.mainBlue,
             style: Theme.of(context)
                 .textTheme
