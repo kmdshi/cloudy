@@ -31,7 +31,7 @@ class PersonEntity {
     return {
       'interests': interests,
       'urlStatus': false,
-      'contacts': [],
+      'contacts': {},
     };
   }
 }

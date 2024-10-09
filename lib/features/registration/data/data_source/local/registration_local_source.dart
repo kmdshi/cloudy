@@ -42,7 +42,7 @@ class RegistrationLocalSource {
     String? keyJson = await secureStorage.read(key: 'cipher_keys');
 
     if (keyJson != null) {
-      return Map<String, BigInt>.from(jsonDecode(keyJson));
+      return Map<String, dynamic>.from(jsonDecode(keyJson));
     }
 
     final keyPair = await cipherService.createKeyPair(nickname, keyPhrase);

@@ -12,7 +12,7 @@ import 'package:cloudy/features/registration/presentation/widgets/verify_sucess_
 import 'package:cloudy/features/settings/presentation/widgets/about_screen.dart';
 import 'package:cloudy/features/settings/presentation/widgets/cipher_screen.dart';
 import 'package:cloudy/features/settings/presentation/widgets/settings_screen.dart';
-import 'package:cloudy/features/user_data/presentation/widgets/general_screen.dart';
+import 'package:cloudy/core/presentation/general_screen.dart';
 import 'package:cloudy/core/presentation/import_adress_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

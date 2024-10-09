@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 
 class CommunicationScreen extends StatefulWidget {
   final InitialDataValueEntity initialDataValueEntity;
@@ -54,6 +55,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         surfaceTintColor: TColorTheme.transparent,
         centerTitle: false,
@@ -100,19 +102,31 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Column(
                     children: [
-                      const Center(child: Text('No messages')),
-                      const Spacer(),
+                      Expanded(
+                        child: Wrap(
+                          alignment: WrapAlignment.center,
+                          children: [
+                            Lottie.asset('assets/gifs/empty-chat-gif.json'),
+                            Text(
+                              'Oops... there\'s nothing here yet, start a dialog first',
+                              style: Theme.of(context).textTheme.headlineMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Spacer(),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           children: [
                             Expanded(
-                              child: TextField(
+                              child: CustomInputField(
                                 controller: messageController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Enter message',
-                                  border: OutlineInputBorder(),
-                                ),
+                                onSubmitted: (_) {
+                                  sendMessage(dialogKey);
+                                  messageController.clear();
+                                },
                               ),
                             ),
                             IconButton(

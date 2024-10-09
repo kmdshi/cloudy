@@ -1,4 +1,3 @@
-import 'package:cloudy/core/services/extensions.dart';
 import 'package:cloudy/features/settings/domain/entity/user_self_entitiy.dart';
 import 'package:cloudy/features/settings/domain/repository/settings_repository.dart';
 import 'package:equatable/equatable.dart';
@@ -15,7 +14,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     required this.settingsRepository,
   }) : super(SettingsInitial()) {
     on<GetInitialUserData>(_getUserData);
-    // on<AddSettingsContactEvent>(_addContact);
+    on<AddSettingsContactEvent>(_addContact);
     on<ChangeUrlSettingsStatusEvent>(_changeStatus);
   }
 
@@ -46,26 +45,26 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
   }
 
-  // Future<void> _addContact(
-  //     AddSettingsContactEvent event, Emitter<SettingsState> emit) async {
-  //   try {
-  //     if (state is SettingsLoaded) {
-  //       final currentState = state as SettingsLoaded;
+  Future<void> _addContact(
+      AddSettingsContactEvent event, Emitter<SettingsState> emit) async {
+    try {
+      if (state is SettingsLoaded) {
+        final currentState = state as SettingsLoaded;
 
-  //       emit(SettingsLoading());
-  //       final result = await settingsRepository.addContact(
-  //         event.AID,
-  //         event.contactAID,
-  //         event.localName,
-  //       );
+        emit(SettingsLoading());
+        final result = await settingsRepository.addContact(
+          event.AID,
+          event.contactAID,
+          event.localName,
+        );
 
-  //       emit(SettingsLoaded(
-  //         userData: currentState.userData,
-  //         expectedErrorMessage: result,
-  //       ));
-  //     }
-  //   } catch (e) {
-  //     emit(SettingsFailure(message: e.toString()));
-  //   }
-  // }
+        emit(SettingsLoaded(
+          userData: currentState.userData,
+          expectedErrorMessage: result,
+        ));
+      }
+    } catch (e) {
+      emit(SettingsFailure(message: e.toString()));
+    }
+  }
 }
