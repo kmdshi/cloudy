@@ -1,5 +1,5 @@
 ![cloudy_gh](https://github.com/user-attachments/assets/f83bb039-fea3-4161-bd4c-4e29106d9493)
-![Dart Version](https://img.shields.io/badge/dart-%3E%3D2.12-brightgreen) ![Flutter Version](https://img.shields.io/badge/flutter-v3.23.0-blue) ![License](https://img.shields.io/badge/license-GPLv2-orange) ![Platform](https://img.shields.io/badge/platform-Android%20|%20iOS%20-blue) ![GitHub Stars](https://img.shields.io/github/stars/whois-kami/cloudy?style=social) ![Last Commit](https://img.shields.io/github/last-commit/whois-kami/cloudy)
+![Dart Version](https://img.shields.io/badge/dart-%3E%3D2.12-brightgreen) ![Flutter Version](https://img.shields.io/badge/flutter-v3.23.0-blue) ![License](https://img.shields.io/badge/license-GPLv2-orange) ![Platform](https://img.shields.io/badge/platform-Android%20|%20iOS%20-blue) ![GitHub Stars](https://img.shields.io/github/stars/kmdshi/cloudy?style=social) ![Last Commit](https://img.shields.io/github/last-commit/kmdshi/cloudy)
 # Cloudy
 
 ## Description
@@ -125,7 +125,7 @@ https://github.com/user-attachments/assets/0da2043d-6681-42ef-8a46-446035725da7
 
 1. Clone the repository:
   ```
-  git clone https://github.com/whois-kami/cloudy.git
+  git clone https://github.com/kmdshi/cloudy.git
   ```
   2. Navigate to the project directory:
   ```
@@ -155,7 +155,7 @@ This project is licensed under the GPL v2 License. See the `LICENSE` file for mo
 
 For any questions, issues, or suggestions, please reach out to the project maintainer:
 
-- **GitHub:** [whois-kami](https://github.com/whois-kami)
+- **GitHub:** [kmdshi](https://github.com/kmdshi)
 - **telegram** - [Contact me](https://t.me/kmdshi)<br />
-- **Project Link** : [Share project link](https://github.com/whois-kami/cloudy)
+- **Project Link** : [Share project link](https://github.com/kmdshi/cloudy)
 
