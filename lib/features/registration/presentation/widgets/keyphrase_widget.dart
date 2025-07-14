@@ -41,6 +41,7 @@ class _KeyPhraseWidgetState extends State<KeyPhraseWidget> {
           Stack(
             children: [
               Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: TColorTheme.white,

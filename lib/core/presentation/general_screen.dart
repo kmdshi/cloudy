@@ -4,7 +4,6 @@ import 'package:cloudy/features/user_data/presentation/widgets/custom_icon_butto
 import 'package:cloudy/features/user_data/presentation/widgets/custom_tabbar_widget.dart';
 import 'package:cloudy/features/user_data/presentation/widgets/user_data_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class GeneralScreen extends StatefulWidget {
@@ -37,6 +36,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           titleSpacing: 20.0,
           title: const Text(
             'Cloudy',

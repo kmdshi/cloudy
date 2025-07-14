@@ -6,10 +6,8 @@ import 'package:flutter/material.dart';
 import 'core/DI/dependency_config.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+ WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await configureInjection();
   runApp(const CryptomeApp());
 }

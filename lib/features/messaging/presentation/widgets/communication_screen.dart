@@ -54,6 +54,8 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<MessagingBloc>();
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -74,16 +76,46 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
             const SizedBox(width: 8),
             // сделать форматирование строки на обьект AID и никнейма
             Text(
-              widget.initialDataValueEntity.username.substring(0, 5),
+              widget.initialDataValueEntity.username,
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ],
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Assets.icons.moreIcon.image(),
-          )
+          MenuAnchor(
+            style: MenuStyle(
+              backgroundColor: WidgetStatePropertyAll(
+                  TColorTheme.scaffoldbg.withValues(alpha: 0.96)),
+              shape: WidgetStatePropertyAll(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+            builder: (context, controller, child) {
+              return IconButton(
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                },
+                icon: Assets.icons.moreIcon.image(),
+              );
+            },
+            menuChildren: [
+              MenuItemButton(
+                onPressed: () => context
+                    .read<MessagingBloc>()
+                    .add(ClearMessagesHistory(
+                      initiatorAID: widget.initialDataValueEntity.initiatorAID,
+                      secondAID: widget.initialDataValueEntity.secondAID,
+                    )),
+                child: const Text('Удалить историю диалога'),
+              ),
+            ],
+          ),
         ],
       ),
       body: BlocBuilder<MessagingBloc, MessagingState>(
@@ -93,7 +125,8 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
             String? previousDate;
 
             return StreamBuilder<List<MessageEntity>>(
-              stream: state.chatHistory,
+              stream: bloc.chatStream,
+              initialData: const [],
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -115,7 +148,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                           ],
                         ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
@@ -248,6 +281,8 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
           ));
     }
   }
+
+  void openOptions() {}
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -74,4 +74,11 @@ class MessagingRepositoryImpl implements MessagingRepository {
       secondPublicKey,
     );
   }
+
+  @override
+  Future<void> clearMessagesHistory(
+      String initiatorAID, String secondAID) async {
+    await messagingRemoteRepository.clearMessagesHistory(
+        initiatorAID, secondAID);
+  }
 }

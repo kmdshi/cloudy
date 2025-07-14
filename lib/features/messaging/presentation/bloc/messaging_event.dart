@@ -47,3 +47,19 @@ class MessagesUpdated extends MessagingEvent {
   @override
   List<Object> get props => [messages];
 }
+
+class ClearMessagesHistory extends MessagingEvent {
+  final String initiatorAID;
+  final String secondAID;
+
+  const ClearMessagesHistory({
+    required this.initiatorAID,
+    required this.secondAID,
+  });
+
+  @override
+  List<Object> get props => [
+        initiatorAID,
+        secondAID,
+      ];
+}

@@ -56,7 +56,7 @@ class MessagingRemoteRepository {
       }
 
       final initiatorKey = data[initiatorAID.substring(0, 4)];
-      
+
       if (initiatorKey != null) {
         final decryptedKey = cipherService.decryptSymmetricKey(
           initiatorKey,
@@ -66,6 +66,30 @@ class MessagingRemoteRepository {
       } else {
         throw ('No key data found');
       }
+    }
+  }
+
+  Future<void> clearMessagesHistory(
+    String initiatorAID,
+    String secondAID,
+  ) async {
+    final sortedAIDs = [initiatorAID.substring(0, 4), secondAID.substring(0, 4)]
+      ..sort();
+    final mutualAID = '${sortedAIDs[0]}_${sortedAIDs[1]}';
+    DocumentSnapshot snapshot =
+        await fireStoreDB.collection('dialogs').doc(mutualAID).get();
+
+    if (!snapshot.exists) {
+      throw Exception('Диалог не существует');
+    } else {
+      Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+      if (data == null) {
+        throw Exception('Не удалось получить данные диалога');
+      }
+
+      data['messages'] = {};
+
+      await fireStoreDB.collection('dialogs').doc(mutualAID).update(data);
     }
   }
 
@@ -126,7 +150,7 @@ class MessagingRemoteRepository {
       if (snapshot.exists) {
         Map<String, dynamic>? data = snapshot.data();
         final messagesMap = data?['messages'] ?? {};
-      
+
         return (messagesMap as Map<String, dynamic>).entries.map((entry) {
           final messageDto =
               MessageDto.fromMap(entry.value as Map<String, dynamic>).copyWith(

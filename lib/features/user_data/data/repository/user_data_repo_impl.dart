@@ -84,7 +84,7 @@ class UserDataRepoImpl implements UserDataRepository {
 
   @override
   Future<Stream<List<UserEntity>?>> getContactsStream(String AID) async {
-    return await messagingRemoteRepo.getContactsStream(AID).map((userDtos) {
+    return  messagingRemoteRepo.getContactsStream(AID).map((userDtos) {
       return userDtos.map((userDto) => mapDtoToEntity(userDto)).toList();
     });
   }

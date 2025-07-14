@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:cloudy/features/messaging/domain/entities/initial_data_value.dart';
@@ -16,6 +15,9 @@ part 'messaging_state.dart';
 class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
   final MessagingRepository messagingRepository;
   StreamSubscription<List<MessageEntity>>? _messagesSubscription;
+  StreamController<List<MessageEntity>>? _controller;
+
+  Stream<List<MessageEntity>> get chatStream => _controller!.stream;
 
   MessagingBloc({
     required this.messagingRepository,
@@ -23,10 +25,35 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
     on<DialogInitializationEvent>(_dialogInit);
     on<MessagesUpdated>(_updatedMessages);
     on<SendMessageEvent>(_sendMessage);
+    on<ClearMessagesHistory>(_clearMessagesHistory);
   }
 
   Future<void> closeSubcription() async {
     await _messagesSubscription?.cancel();
+    await _controller?.close();
+    _controller = null;
+    emit(MessagingInitial());
+  }
+
+  Future<void> _clearMessagesHistory(
+      ClearMessagesHistory event, Emitter<MessagingState> emit) async {
+    if (state is MessagingLoaded) {
+      final currentState = state as MessagingLoaded;
+
+      try {
+        await messagingRepository.clearMessagesHistory(
+            event.initiatorAID, event.secondAID);
+
+        emit(MessagingLoaded(
+          dialogKey: currentState.dialogKey,
+        ));
+      } catch (e) {
+        emit(MessagingFailure(message: e.toString()));
+      }
+    } else {
+      emit(const MessagingFailure(
+          message: 'Invalid state: MessagingLoaded expected.'));
+    }
   }
 
   Future<void> _dialogInit(
@@ -37,16 +64,22 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
         event.initialDataValue.secondAID,
         event.initialDataValue.secondPublicKey,
       );
-      final chatHistoryStream = messagingRepository.getMessagesStream(
-          event.initialDataValue.initiatorAID,
-          event.initialDataValue.secondAID,
-          dialogKey);
-      emit(MessagingLoaded(
-          dialogKey: dialogKey, chatHistory: chatHistoryStream));
 
-      _messagesSubscription = chatHistoryStream.listen((messages) {
-        add(MessagesUpdated(messages: messages));
-      });
+      await closeSubcription();
+
+      final controller = StreamController<List<MessageEntity>>();
+      controller.add([]);
+
+      _messagesSubscription = messagingRepository
+          .getMessagesStream(event.initialDataValue.initiatorAID,
+              event.initialDataValue.secondAID, dialogKey)
+          .listen(controller.add);
+
+      _controller = controller;
+
+      emit(MessagingLoaded(
+        dialogKey: dialogKey,
+      ));
     } catch (e) {
       emit(MessagingFailure(message: e.toString()));
     }
@@ -72,11 +105,8 @@ class MessagingBloc extends Bloc<MessagingEvent, MessagingState> {
       if (state is MessagingLoaded) {
         final currentState = state as MessagingLoaded;
 
-        final updatedMessages = event.messages;
-
         emit(MessagingLoaded(
           dialogKey: currentState.dialogKey,
-          chatHistory: Stream.value(updatedMessages),
         ));
       }
     } catch (e) {

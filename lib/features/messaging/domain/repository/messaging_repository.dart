@@ -15,4 +15,6 @@ abstract class MessagingRepository {
 
   Stream<List<MessageEntity>> getMessagesStream(
       String initiatorAID, String secondAID, Uint8List dialogKey);
+
+  Future<void> clearMessagesHistory(String initiatorAID, String secondAID);
 }

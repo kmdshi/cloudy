@@ -59,7 +59,7 @@ class TCiphermeTheme {
         fontSize: 20,
       ),
     ),
-    tabBarTheme: TabBarTheme(
+    tabBarTheme: TabBarThemeData(
       labelPadding: EdgeInsets.all(16),
       dividerColor: TColorTheme.transparent,
       indicatorSize: TabBarIndicatorSize.tab,
