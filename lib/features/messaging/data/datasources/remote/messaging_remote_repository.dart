@@ -47,7 +47,7 @@ class MessagingRemoteRepository {
       };
       await fireStoreDB.collection('dialogs').doc(mutualAID).set(firebaseData);
 
-      return base64Decode(firstUserKey);
+      return base64Decode(commonSymmeticKey);
     } else {
       Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
 
