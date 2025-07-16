@@ -1,5 +1,6 @@
 ![cloudy_gh](https://github.com/user-attachments/assets/f83bb039-fea3-4161-bd4c-4e29106d9493)
-![Dart Version](https://img.shields.io/badge/dart-%3E%3D2.12-brightgreen) ![Flutter Version](https://img.shields.io/badge/flutter-v3.23.0-blue) ![License](https://img.shields.io/badge/license-GPLv2-orange) ![Platform](https://img.shields.io/badge/platform-Android%20|%20iOS%20-blue) ![GitHub Stars](https://img.shields.io/github/stars/kmdshi/cloudy?style=social) ![Last Commit](https://img.shields.io/github/last-commit/kmdshi/cloudy)
+![Dart Version](https://img.shields.io/badge/dart-%3E%3D2.12-brightgreen) ![Flutter](https://img.shields.io/badge/Made%20with-Flutter-blue)
+![Open Source](https://img.shields.io/badge/Open%20Source-Yes-brightgreen) ![Crypto](https://img.shields.io/badge/ETP%20Protocol-Custom-orange) ![Flutter Version](https://img.shields.io/badge/flutter-v3.23.0-blue) ![License](https://img.shields.io/badge/license-GPLv2-orange) ![Platform](https://img.shields.io/badge/platform-Android%20|%20iOS%20-blue) ![GitHub Stars](https://img.shields.io/github/stars/kmdshi/cloudy?style=social) ![Last Commit](https://img.shields.io/github/last-commit/kmdshi/cloudy)
 # Cloudy
 
 ## Description
